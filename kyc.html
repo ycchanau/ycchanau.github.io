@@ -1,0 +1,1066 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>认识你的客户（KYC）—保险新人培训｜50分钟</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --fg: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #22c55e;
+            --accent2: #38bdf8;
+            --card: #111827;
+            --card2: #0b1220;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg), #0b1022);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--fg);
+        }
+
+        /* deck */
+        .deck {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+        }
+
+        .slide {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            padding: 7vh 6vw;
+            display: none;
+            grid-template-rows: auto 1fr auto;
+            gap: 2.2vh;
+            break-inside: avoid;
+            /* Prevents splitting cards across pages */
+            /* 👇 添加这两行！这才是你要的全部 */
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .slide.active {
+            display: grid;
+            animation: fade .35s ease;
+        }
+
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0 0 .3em
+        }
+
+        h1 {
+            font-size: clamp(24px, 6vw, 44px);
+            line-height: 1.15
+        }
+
+        h2 {
+            font-size: clamp(20px, 4.8vw, 34px)
+        }
+
+        h3 {
+            font-size: clamp(18px, 4.2vw, 28px)
+        }
+
+        p {
+            margin: .2em 0 .6em;
+            color: var(--fg);
+            font-size: clamp(15px, 3.8vw, 18px);
+            line-height: 1.6
+        }
+
+        ul,
+        ol {
+            margin: .2em 0 .6em;
+            padding-left: 1.2em
+        }
+
+        li {
+            margin: .25em 0;
+            font-size: clamp(15px, 3.8vw, 18px);
+            line-height: 1.6
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        .tag {
+            display: inline-block;
+            padding: .2em .55em;
+            border: 1px solid #334155;
+            border-radius: 999px;
+            color: #cbd5e1;
+            background: rgba(148, 163, 184, .1);
+            font-size: .9em
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem
+        }
+
+        .cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+        }
+
+        .cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr))
+        }
+
+        @media (max-width:800px) {
+
+            .cols-2,
+            .cols-3 {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .card {
+            background: linear-gradient(180deg, var(--card), var(--card2));
+            border: 1px solid #1f2937;
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+        }
+
+        .cta {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent), #16a34a);
+            color: #052e16;
+            padding: .6em 1em;
+            border-radius: 10px;
+            font-weight: 700
+        }
+
+        .kbd {
+            font: 600 14px/1 monospace;
+            background: #0b1220;
+            color: #a5b4fc;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: .25em .45em
+        }
+
+        /* progress + footer */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #9ca3af
+        }
+
+        .bar {
+            height: 6px;
+            background: #111827;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .bar>i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent2), #22c55e)
+        }
+
+        /* table style */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px
+        }
+
+        th,
+        td {
+            padding: .55em .65em;
+            text-align: left;
+            font-size: clamp(14px, 3.5vw, 17px)
+        }
+
+        tr {
+            background: #0b1326;
+            border: 1px solid #1f2937
+        }
+
+        th {
+            background: #0f1a33;
+            color: #cbd5e1;
+            font-weight: 700
+        }
+
+        tr,
+        th,
+        td {
+            border-radius: 8px
+        }
+
+        /* PRINT MODE — CRITICAL FIXES BELOW */
+        @media print {
+
+            html,
+            body {
+                background: #fff !important;
+                color: #111 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            .deck {
+                height: auto !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .slide {
+                display: block !important;
+                height: auto !important;
+                width: 100% !important;
+                padding: 1in 0.8in !important;
+                /* Print-friendly margins */
+                margin-bottom: 0.5in !important;
+                page-break-after: always !important;
+                /* Force page break after each slide */
+                break-inside: avoid !important;
+                box-shadow: none !important;
+                background: #fff !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .slide:last-child {
+                page-break-after: avoid !important;
+                /* Don't force blank page at end */
+            }
+
+            /* Hide all UI elements in print */
+            .nav,
+            .footer,
+            .hint,
+            .bar,
+            .btn,
+            .card>div[style*="rgba(34, 197, 94)"] {
+                /* Hide讲师备注 cards */
+                display: none !important;
+            }
+
+            /* Fix text colors */
+            h1,
+            h2,
+            h3,
+            p,
+            ul,
+            li,
+            th,
+            td {
+                color: #111 !important;
+                text-shadow: none !important;
+            }
+
+            /* Restore card styling for print */
+            .card {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+                margin-bottom: 0.5in !important;
+            }
+
+            /* Ensure tables fit */
+            table {
+                width: 100% !important;
+                font-size: 12pt !important;
+            }
+
+            /* Make sure long content doesn’t break awkwardly */
+            * {
+                orphans: 3;
+                widows: 3;
+            }
+
+            /* Remove gradients */
+            .card,
+            .card>h3,
+            .card>p,
+            .card>ul {
+                background: transparent !important;
+                background-image: none !important;
+            }
+
+            /* Make links readable */
+            a {
+                color: #0066cc !important;
+                text-decoration: underline !important;
+            }
+        }
+
+        /* nav */
+        .nav {
+            position: fixed;
+            inset: auto 0 0 0;
+            display: flex;
+            gap: .6rem;
+            justify-content: center;
+            align-items: center;
+            padding: .6rem;
+            background: rgba(2, 6, 23, .55);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid #1f2937
+        }
+
+        .btn {
+            background: #0b1326;
+            border: 1px solid #1f2937;
+            color: #e5e7eb;
+            border-radius: 10px;
+            padding: .55em .9em;
+            font-weight: 700
+        }
+
+        .btn.primary {
+            background: linear-gradient(90deg, #3b82f6, #22c55e);
+            border: none;
+            color: #02130a
+        }
+
+        .hint {
+            position: fixed;
+            top: .6rem;
+            right: .6rem;
+            color: #9ca3af;
+            font-size: 12px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck" id="deck">
+        <!-- 1 -->
+        <section class="slide active" data-title="标题">
+            <header>
+                <h1>认识你的客户（KYC）—保险新人培训</h1>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>课程目标</h3>
+                    <ul>
+                        <li>掌握“KYC五步法”，把聊天变成结构化面谈</li>
+                        <li>会用子女教育与财富传承两张KYC表</li>
+                        <li>输出1页“目标-预算-风险”摘要与3档方案</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>时间安排（50分钟）</h3>
+                    <ul>
+                        <li>开场与框架 13分钟′</li>
+                        <li>工具表拆解 12分钟′</li>
+                        <li>休息 10分钟′</li>
+                        <li>两大案例 12分钟′</li>
+                        <li>评估与匹配 8分钟′</li>
+                        <li>合规与Q&A 5分钟′</li>
+                    </ul>
+                    <p class="muted">提示：电脑按 ← → 切换；手机左右滑动；或用键盘 <span class="kbd">Space</span></p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">讲师备注：破冰+合规声明</span>
+                <div class="bar" style="width:40%"><i style="width:4%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 2 -->
+        <section class="slide" data-title="为什么KYC决定成单质量">
+            <header>
+                <h2>为什么KYC决定成单质量</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>好方案公式</h3>
+                    <p>方案价值 = 客户目标 × 资源约束 × 风险承受 × 时间轴匹配</p>
+                    <ul>
+                        <li>把“愿望”落成“金额+日期”</li>
+                        <li>以现金流表达预算，先保底再增益</li>
+                        <li>记录-复述-确认，形成可复盘资料</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>常见败因</h3>
+                    <ul>
+                        <li>没问清婚史/负债/用款时间</li>
+                        <li>产品先行，忽略现金流与风险</li>
+                        <li>无纪要，复访无从谈起</li>
+                    </ul>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">互动：你最近一次失单，缺了哪块信息？</span>
+                <div class="bar" style="width:40%"><i style="width:12%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 3 -->
+        <section class="slide" data-title="KYC五步法">
+            <header>
+                <h2>KYC五步法总览</h2>
+            </header>
+            <main class="grid cols-3">
+                <div class="card">
+                    <h3>1 建立信任</h3>
+                    <ul>
+                        <li>议程设定与保密</li>
+                        <li>边界与时长</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>2 画像与时间轴</h3>
+                    <ul>
+                        <li>家庭/资产/负债/现金流</li>
+                        <li>事件时间表</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>3 目标拆解</h3>
+                    <ul>
+                        <li>金额M/期限D</li>
+                        <li>优先级与弹性</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>4 风险与偏好</h3>
+                    <ul>
+                        <li>风险承受度</li>
+                        <li>流动性与经验</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>5 复述与确认</h3>
+                    <ul>
+                        <li>量化记录</li>
+                        <li>下一步与清单</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>产出</h3>
+                    <p>1页摘要 + 3档方案（保底/标准/进阶）</p>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">技巧：用客户的词复述一次</span>
+                <div class="bar" style="width:40%"><i style="width:20%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 4 -->
+        <section class="slide" data-title="面谈开场话术">
+            <header>
+                <h2>面谈开场标准话术</h2>
+            </header>
+            <main class="card">
+                <p>“今天我們花30到40分鐘，想好好聽聽您的家庭情況和未來打算——不是來推產品，而是幫您理清楚：哪些目標是確定的？哪些地方還缺一塊拼圖？所有資訊只用於給您做一份專屬規劃摘要，絕不外洩，也完全尊重您的選擇。任何問題，您都可以跳過，或者說‘我還沒想好’。”
+                </p>
+                <ul>
+                    <li><span class="tag">同意与记录</span> 請客戶確認信息使用範圍與目的</li>
+                    <li><span class="tag">议程</span> 聆聽 → 確認理解 → 共同定下一步</li>
+                </ul>
+                <p class="muted" style="margin-top:1rem;">💡 小提醒：開場時微笑 + 停頓2秒，比說完一長串話更有力量。</p>
+            </main>
+
+            <!-- 👇 讲师专属提示卡 —— 不影響 footer，不影響進度條 -->
+            <div
+                style="margin: 1.5rem 0; padding: 0.8rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
+                <strong style="color:#22c55e; display:block; margin-bottom:0.5rem;">讲师备注 🎯</strong>
+                <ul style="padding-left:1.2em; margin:0.3em 0; line-height:1.6;">
+                    <li>🔹 <strong>不要急著說完這段話</strong>，說完後<strong>沉默2秒</strong>，讓客戶感覺「他有空間決定要不要繼續」。</li>
+                    <li>🔹 如果客戶問：“那你到底想賣什麼？” 回應：<br><em>“其實我現在也不知道，等聽完您說完，我才知道該怎麼幫您。”</em></li>
+                </ul>
+                <p class="muted" style="font-size:0.9em; margin-top:0.6rem; margin-bottom:0;">※ 語氣比內容更重要 ——
+                    真誠的停頓，勝過完美的話術。</p>
+            </div>
+
+            <footer class="footer"><span class="muted">道具：名片、合规提示卡、记录表</span>
+                <div class="bar" style="width:40%"><i style="width:28%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 5 -->
+        <section class="slide" data-title="画像四象限">
+            <header>
+                <h2>画像四象限与现金流</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>四象限</h3>
+                    <ul>
+                        <li>家庭：婚姻、受抚养人、赡养人、决策人</li>
+                        <li>财务：收入稳定性、支出结构、负债与偿付比</li>
+                        <li>资产：现金/权益/不动产/保障缺口</li>
+                        <li>风险：健康/职业/法律/经营暴露</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>可投资现金流</h3>
+                    <p>年可投 = 税后收入 − 刚性支出 − 必选保障</p>
+
+                    <div style="margin-top: 1rem; display: grid; gap: 0.75rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
+                            <span>税后收入</span>
+                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
+                            <span>刚性支出</span>
+                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
+                        </div>
+                        <div
+                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
+                            <span>保障保费</span>
+                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">练习：3分钟完成同桌画像草表</span>
+                <div class="bar" style="width:40%"><i style="width:36%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 6 -->
+        <section class="slide" data-title="时间轴与事件地图">
+            <header>
+                <h2>时间轴与事件地图</h2>
+            </header>
+            <main class="grid cols-3">
+                <div class="card">
+                    <h3>短期 1–3年</h3>
+                    <ul>
+                        <li>买房/创业/首笔教育</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>中期 3–10年</h3>
+                    <ul>
+                        <li>子女教育/事业扩张</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>长期 10年以上</h3>
+                    <ul>
+                        <li>退休/传承/税务优化</li>
+                    </ul>
+                </div>
+                <div class="card" style="grid-column:1/-1">
+                    <h3>T-D清单</h3>
+                    <p>为每个事件记录 金额(M) + 截止日期(D) + 成功概率(P) + 灵活度(F)</p>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">工具：事件→账户一一对应</span>
+                <div class="bar" style="width:40%"><i style="width:44%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 7 -->
+        <section class="slide" data-title="风险承受与流动性">
+            <header>
+                <h2>风险承受与流动性测试</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>提问范例</h3>
+                    <ul>
+                        <li><strong>“如果一笔钱跌了10%，您第一反应是？”</strong><br><em>（恐慌卖出？还是等一等？）</em></li>
+                        <li><strong>“一笔钱要锁3–5年，您安心吗？”</strong><br><em>（不是问锁定期限，而是探討情緒）</em></li>
+                        <li><strong>“收入突然断了，家里能撑多久不慌？”</strong><br><em>（常聽到回答：‘大概2個月’或‘我先生有存款’）</em></li>
+                    </ul>
+                    <p class="muted" style="margin-top:1.5rem; font-size: clamp(14px, 3.5vw, 16px);">
+                        💡 别急着记答案——<br>
+                        <span class="kbd">“您为什么这么想呢？”</span> 才是钥匙。
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>输出</h3>
+                    <ul>
+                        <li>风险标签：保守 / 均衡 / 进取</li>
+                        <li>流动性池：6–12个月支出独立账户</li>
+                    </ul>
+
+                    <!-- 专业心法：极致精简 -->
+                    <p class="muted" style="margin-top:1.5rem; font-size: clamp(14px, 3.5vw, 16px);">
+                        <strong style="color:var(--accent);">风险 = 情绪稳定度 × 控制感</strong><br>
+                        —— 有时这不是数学题，是人性题。
+                    </p>
+                </div>
+            </main>
+
+            <!-- 👇 讲师备注：浓缩为一句灵魂，极致精炼，高质感 -->
+            <div
+                style="margin: 1.5rem 0; padding: 1rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
+                <strong style="color:#22c55e; display:block; margin-bottom: 0.6rem;">讲师备注 🎯</strong>
+
+                <p style="margin: 0 0 0.8rem 0; line-height: 1.7;">
+                    📌 不是问出答案，是听懂那些「没说出口的害怕」。
+                </p>
+
+                <div
+                    style="border-left: 3px solid var(--accent); padding-left: 1rem; margin-top: 0.6rem; color: #e5e7eb; font-style: normal;">
+                    <p style="margin: 0; line-height: 1.6; font-size: clamp(15px, 3.8vw, 17px);">
+                        当他说：<em>“我有点怕……”</em><br>
+                        你不必说话。<br>
+                        只需点头：<br>
+                        <strong>“嗯，我知道你在怕什么。”</strong>
+                    </p>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <span class="muted">注意：先应急与保障，再投资</span>
+                <div class="bar" style="width:40%"><i style="width:52%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 8 -->
+        <section class="slide" data-title="子女教育KYC（结构）">
+            <header>
+                <h2>子女教育KYC表：结构与关键问题</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>信息区块</h3>
+                    <ul>
+                        <li>子女人数与学段、留学起点、目标国家</li>
+                        <li>预计使用年限：1–5 / 5–10 / 10年以上</li>
+                        <li>预算区间与弹性、是否已有计划</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>三问定方向</h3>
+                    <ol>
+                        <li>最早哪一年用钱？一次性还是分批？</li>
+                        <li>最低要保证多少？最多能投入多少？</li>
+                        <li>若录取更好学校，预算能上浮 X% 吗？</li>
+                    </ol>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">记录：金额与日期优先</span>
+                <div class="bar" style="width:40%"><i style="width:60%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 9 -->
+        <section class="slide" data-title="子女教育KYC（资金与风险）">
+            <header>
+                <h2>子女教育：资金现状与风险</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>资金盘点</h3>
+                    <ul>
+                        <li>当前准备金：—— 万；缺口：—— 万</li>
+                        <li>现用工具：现金/基金定投/年金/增额终身</li>
+                        <li>多币种与汇率计划</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>核心风险与对策</h3>
+                    <ul>
+                        <li>市场回撤撞车用款年 → 提前降波+保底账户</li>
+                        <li>学费上涨/通胀 → 年度调增比率</li>
+                        <li>收入中断 → 保障账户与保费豁免</li>
+                    </ul>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">输出：三桶—保底/增益/机动</span>
+                <div class="bar" style="width:40%"><i style="width:68%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 10 -->
+        <section class="slide" data-title="财富传承KYC（结构）">
+            <header>
+                <h2>财富传承KYC表：结构与关键问题</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>信息区块</h3>
+                    <ul>
+                        <li>婚姻与亲属结构；是否再婚/重组家庭</li>
+                        <li>资产：动产/不动产/股权；负债与质押</li>
+                        <li>关注点：婚变、债务、保密、效率</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>工具与安排</h3>
+                    <ul>
+                        <li>指定受益人/遗嘱/监护</li>
+                        <li>人寿保险金专款、保险金信托/家族信托</li>
+                        <li>关键人保险与股权回购金池</li>
+                    </ul>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">提醒：先厘清法定继承边界</span>
+                <div class="bar" style="width:40%"><i style="width:76%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 11 -->
+        <section class="slide" data-title="案例A 教育金">
+            <header>
+                <h2>案例A：内地家庭的子女海外教育金规划</h2>
+            </header>
+            <main class="grid cols-3">
+                <div class="card">
+                    <h3>客户画像</h3>
+                    <ul>
+                        <li>40岁上海企业主，独女8岁，国际学校年费约25万</li>
+                        <li>年可投120万，但担心：① 每年5万美元购汇额度不够；② 国内收益跑不赢通胀</li>
+                        <li>目标：18岁赴美Top 30大学，总预算300万人民币</li>
+                        <li><em>真实焦虑：</em>“钱放国内怕出不去，放国外怕没人管。”</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>三桶方案</h3>
+                    <ul>
+                        <li><strong>保底桶（120万）：</strong>美元终身寿险 —— 现金价值锁定，18岁可贷款直付海外</li>
+                        <li><strong>增益桶（90万）：</strong>ILP全球指数基金 —— 对冲贬值，年化7–8%</li>
+                        <li><strong>机动桶（30万）：</strong>美元货币基金 —— 应急学费、汇率波动</li>
+                    </ul>
+                    <p class="muted" style="margin-top:0.8rem;">💡 不是存钱上学，是建一条<span
+                            style="color:var(--accent)">合法跨境通道</span>。</p>
+                </div>
+
+                <div class="card">
+                    <h3>执行节奏</h3>
+                    <ul>
+                        <li>0–8年：持续投入 + 再平衡</li>
+                        <li>9–14年：降低波动，转固收</li>
+                        <li>15–17年：按学年提款，绕开5万美金限额</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="grid-column:1/-1">
+                    <h3>话术</h3>
+
+                    <!-- 讲师提示：用小字号、浅色、独立段落，弱化但保留 -->
+                    <p
+                        style="margin: 0 0 1rem 0; font-size: clamp(14px, 3.5vw, 16px); color: var(--muted); line-height: 1.6;">
+                        📌 别跟客户说“这是保险”，他们听得耳朵起茧。
+                    </p>
+
+                    <!-- 客户话术：主文本，放大、留白、呼吸感 -->
+                    <p style="margin: 0; font-size: clamp(15px, 3.8vw, 17px); line-height: 1.8; color: var(--fg);">
+                        “您不是在买保险，<br>
+                        是为女儿建一套<span style='color:var(--accent)'>不受政策影响的财务系统</span>。<br>
+                        孩子上大学那天，钱已经在那边了——<br>
+                        没有审批，没有等待，只有交付。”
+                    </p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">练习：若人民币兑美元跌至8.5，需多存多少才能覆盖？</span>
+                <div class="bar" style="width:40%"><i style="width:84%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 12 -->
+        <section class="slide" data-title="案例B 传承">
+            <header>
+                <h2>案例B：内地企业家的跨境财富传承</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>客户画像与风险</h3>
+                    <ul>
+                        <li>55岁浙江制造老板，净资产3000万，资产集中于房产、股权、理财</li>
+                        <li>配偶内地户籍，独子26岁已移民加拿大，未来或持美国绿卡</li>
+                        <li>无遗嘱，公司负债800万，法人担保中</li>
+                        <li><em>真实恐惧：</em>“我走后，公司被追债？儿子被IRS查税？老婆拿不到钱？”</li>
+                        <li><em>深层诉求：</em>“别让我的一生，变成一场法律纠纷。”</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>方案骨架</h3>
+                    <ul>
+                        <li><strong>离岸终身寿险（美元）：</strong>投保500万美元，受益人设为家族信托，赔付金直出境外，不进内地遗产</li>
+                        <li><strong>开曼家族信托：</strong>香港受托管理 —— 儿子30岁方可动用本金；配偶享生活费+居住权；债务完全隔离</li>
+                        <li><strong>关键人保险：</strong>保单现金价值作为股权回购基金，防企业被迫清算</li>
+                        <li><strong>税务合规：</strong>完成CRS申报，规避FATCA风险</li>
+                    </ul>
+                    <p class="muted" style="margin-top:0.8rem;">💡“真正的传承，不是留钱，是让钱<strong>不被任何人夺走</strong>。”</p>
+                </div>
+            </main>
+
+            <div class="card" style="grid-column:1/-1">
+                <h3>话术</h3>
+                <p style="margin:0; line-height:1.8; font-size: clamp(15px, 3.8vw, 17px); color: var(--fg);">
+                    我们不藏钱，<br>
+                    只给它一件<span style="font-weight:600;color:var(--accent)">防弹衣</span>——<br>
+                    它还在那儿，<br>
+                    但别人碰不到。<br><br>
+
+                    您走后，家人不需要争吵、诉讼或等待。<br>
+                    他们只需平静地说：<br>
+                    <strong>“爸爸没留麻烦，只留了选择。”</strong>
+                </p>
+            </div>
+
+            <footer class="footer">
+                <span class="muted">落地：提供《跨境传承检查清单》——含受益人声明书、信托摘要、CRS记录、资产隔离协议模板</span>
+                <div class="bar" style="width:40%"><i style="width:92%"></i></div>
+            </footer>
+        </section>
+        <!-- 13 -->
+        <section class="slide" data-title="评估雷达与匹配矩阵">
+            <header>
+                <h2>风险评估雷达与方案匹配矩阵</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>雷达维度</h3>
+                    <ul>
+                        <li>收入稳定/负债率/保障缺口</li>
+                        <li>应急与流动性/投资经验/心理容忍</li>
+                    </ul>
+                    <p class="muted">红灯先补：应急金与保障；黄灯控波动；绿灯可进取</p>
+                </div>
+                <div class="card">
+                    <h3>匹配矩阵</h3>
+                    <ul>
+                        <li>长期刚性：终身/年金/教育金/固收</li>
+                        <li>中期弹性：基金定投/到期目标基金/可转债</li>
+                        <li>短期与应急：货币/短债/高流动账户</li>
+                    </ul>
+                </div>
+            </main>
+            <footer class="footer"><span class="muted">原则：一目标一账户，避免池子混用</span>
+                <div class="bar" style="width:40%"><i style="width:100%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 14 -->
+        <section class="slide" data-title="价格表达与促成">
+            <header>
+                <h2>价格表达与当场促成</h2>
+            </header>
+            <main class="grid cols-3">
+                <div class="card">
+                    <h3>现金流表达</h3>
+                    <ul>
+                        <li>不说“总投入300万”，说：<em>“每月约2.5万，像交房租一样自然”</em></li>
+                        <li>三档不是“贵贱”，是<span style="color:var(--accent)">三种生活状态</span>：
+                            保底 —— 不慌；标准 —— 自在；进阶 —— 放心</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>四步促成</h3>
+                    <ol>
+                        <li><strong>复盘价值：</strong>“还记得您最怕的那件事吗？现在，它已经被锁定了。”</li>
+                        <li><strong>呈现三档：</strong>“这三套安排，哪一套更像您未来十年想过的生活？”</li>
+                        <li><strong>确认预算：</strong>“如果让您选一个能安心启动的数字，是多少？”</li>
+                        <li><strong>约定交付：</strong>“我今天发您完整方案包，您看两天，周三上午我们再碰一次——不催您，只等您确认。”</li>
+                    </ol>
+                </div>
+
+                <div class="card">
+                    <h3>常见异议</h3>
+                    <ul>
+                        <li><strong>“再看看”</strong> →
+                            “完全理解。这种事，没人敢仓促决定。<br>我帮您把方案保留到本周五——<br><em>因为我知道，您不是不想做，是不想做错。</em>”</li>
+                        <li><strong>“预算紧”</strong> → “没关系，我们可以先从‘保底桶’启动。它不占太多现金流，却能守住您最在意的部分。<br>进阶部分，随时可追加，不急。”</li>
+                        <li><strong>“和家人商量”</strong> → “当然。不过，您希望他们看到的是：<br>一份清晰的计划，还是一个还在犹豫的人？”</li>
+                    </ul>
+                </div>
+            </main>
+
+            <!-- 👇 不是“备注”，是信念 -->
+            <div
+                style="margin: 1.8rem 0; padding: 1rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
+                <strong style="color:#22c55e; display:block; margin-bottom:0.4rem;">讲师备注 🎯</strong>
+                <p style="margin:0; line-height:1.7; text-align:center;">
+                    真正的促成，<br>
+                    不是说服客户买，<br>
+                    是让他<strong>自己得出结论：</strong><br>
+                    “我不买，才是<strong>风险最大</strong>的决定。”
+                </p>
+            </div>
+
+            <footer class="footer">
+                <span class="muted">工具：签前检查清单 —— 确认：信任已建、方案认同、预算清晰、时间窗锁定</span>
+                <div class="bar" style="width:40%"><i style="width:100%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 15 -->
+        <section class="slide" data-title="KYC三大常見誤區">
+            <header>
+                <h2>KYC三大常見誤區與對策</h2>
+            </header>
+            <main class="grid cols-1">
+                <div class="card">
+                    <h3>误区1：只看“钱”，不看“人”</h3>
+                    <ul>
+                        <li><strong>案例：</strong>客户年收入高，但家庭关系复杂，直接推高保费产品 → 因信任未建立，客户婉拒。</li>
+                        <li><strong>对策：</strong>先聊家庭、价值观与情感需求，再谈财务。<br>
+                            <em>“钱是工具，人，才是目的。”</em>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin-top:1.5rem">
+                    <h3>误区2：工具表“填空式”完成，而非“挖掘式”分析</h3>
+                    <ul>
+                        <li><strong>案例：</strong>客户勾选“有留学打算”，却未深问：“为什么想送孩子出国？您希望他从中获得什么？” → 方案冰冷，缺乏动机。</li>
+                        <li><strong>对策：</strong>用开放性问题引导：<br>
+                            <span class="kbd">“您觉得孩子留学最大的收获是什么？”</span><br>
+                            <span class="kbd">“如果现在没钱，您会怎么安排他的未来？”</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin-top:1.5rem">
+                    <h3>误区3：KYC一次完成，忽略动态变化</h3>
+                    <ul>
+                        <li><strong>案例：</strong>子女从小学升入高中，教育金规划未更新 → 方案失效，客户失望。</li>
+                        <li><strong>对策：</strong>每半年主动回访，动态更新T-D清单与风险状态。<br>
+                            <em>“KYC不是一次性任务，而是持续的信任对话。”</em>
+                        </li>
+                    </ul>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <span class="muted">核心理念：KYC不是填表格，是建立一段值得托付的关系。</span>
+                <div class="bar" style="width:40%"><i style="width:84%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 16 -->
+        <section class="slide" data-title="合规与隐私">
+            <header>
+                <h2>合规与隐私要点</h2>
+            </header>
+            <main class="card">
+                <ul>
+                    <li>最小化收集：只问与方案相关信息</li>
+                    <li>记录留痕：时间、方式、要点与同意</li>
+                    <li>禁止承诺收益、禁止不当用途营销</li>
+                </ul>
+            </main>
+            <footer class="footer"><span class="muted">合规先行，长期主义</span></footer>
+        </section>
+
+        <!-- 17 -->
+        <section class="slide" data-title="面谈纪要模板与作业">
+            <header>
+                <h2>面谈纪要模板 + 课后作业</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>纪要模板</h3>
+                    <ul>
+                        <li>画像摘要（家庭/现金流/风险）</li>
+                        <li>目标T-D表与预算三轨</li>
+                        <li>风险雷达与下一步清单</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>作业</h3>
+                    <ul>
+                        <li>各完成1份教育/传承KYC表</li>
+                        <li>输出1页摘要 + 三档方案</li>
+                    </ul>
+                </div>
+            </main>
+        </section>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav">
+        <button class="btn" id="prevBtn">← 上一页</button>
+        <button class="btn primary" id="nextBtn">下一页 →</button>
+        <button class="btn" id="tocBtn">目录</button>
+        <button class="btn" id="printBtn">打印/导出PDF</button>
+    </div>
+    <div class="hint">提示：← → 或空格切换；点击“目录”快速跳转</div>
+
+    <script>
+        (function () {
+            const slides = [...document.querySelectorAll('.slide')];
+            const bar = () => document.querySelector('.slide.active .bar i');
+            let idx = 0;
+            const show = (i) => {
+                idx = (i + slides.length) % slides.length;
+                slides.forEach(s => s.classList.remove('active'));
+                slides[idx].classList.add('active');
+                const prog = ((idx + 1) / slides.length * 100).toFixed(1) + '%';
+                const b = bar(); if (b) b.style.width = prog;
+                document.title = slides[idx].dataset.title ? slides[idx].dataset.title + '｜KYC培训' : 'KYC培训';
+            };
+            const next = () => show(idx + 1);
+            const prev = () => show(idx - 1);
+            document.getElementById('nextBtn').onclick = next;
+            document.getElementById('prevBtn').onclick = prev;
+            document.getElementById('printBtn').onclick = () => window.print();
+
+            // keyboard
+            window.addEventListener('keydown', e => {
+                if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+                if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+                if (e.key === 'Home') show(0);
+                if (e.key === 'End') show(slides.length - 1);
+            });
+
+            // touch swipe
+            let x0 = null;
+            window.addEventListener('touchstart', e => { x0 = e.changedTouches[0].clientX; }, { passive: true });
+            window.addEventListener('touchend', e => {
+                if (x0 === null) return;
+                const dx = e.changedTouches[0].clientX - x0;
+                if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+                x0 = null;
+            });
+
+            // Table of Contents modal
+            const tocBtn = document.getElementById('tocBtn');
+            tocBtn.addEventListener('click', () => {
+                const items = slides.map((s, i) => `${i + 1}. ${s.dataset.title || '第' + (i + 1) + '页'}`).join('\n');
+                const pick = prompt('输入页码跳转：\n' + items + '\n\n当前：' + (idx + 1));
+                const n = parseInt(pick, 10);
+                if (!isNaN(n) && n >= 1 && n <= slides.length) show(n - 1);
+            });
+
+            // Deep link ?p=#
+            const qp = new URLSearchParams(location.search).get('p');
+            if (qp) { const n = parseInt(qp, 10); if (!isNaN(n)) show(n - 1); }
+
+        })();
+    </script>
+</body>
+
+</html>
