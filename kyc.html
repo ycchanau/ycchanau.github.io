@@ -1,34 +1,32 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-HK">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <title>认识你的客户（KYC）—保险新人培训｜50分钟</title>
+    <title>KYC——AXA香港新人培訓｜60分鐘</title>
     <style>
         :root {
-            --bg: #0f172a;
+            --bg: #0b1220;
             --fg: #e5e7eb;
             --muted: #94a3b8;
             --accent: #22c55e;
             --accent2: #38bdf8;
-            --card: #111827;
-            --card2: #0b1220;
+            --card: #0f172a;
+            --card2: #0b1326;
+            --line: #1f2937;
+            --axa: #004b8d;
         }
 
         html,
         body {
             height: 100%;
             margin: 0;
-            background: linear-gradient(180deg, var(--bg), #0b1022);
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(180deg, var(--bg), #0a0f1e);
             color: var(--fg);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang HK", "PingFang SC", "Heiti SC", "Microsoft JhengHei", "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* deck */
         .deck {
             height: 100%;
             display: grid;
@@ -43,23 +41,20 @@
             padding: 7vh 6vw;
             display: none;
             grid-template-rows: auto 1fr auto;
-            gap: 2.2vh;
-            break-inside: avoid;
-            /* Prevents splitting cards across pages */
-            /* 👇 添加这两行！这才是你要的全部 */
+            gap: 2vh;
             overflow-y: auto;
             max-height: 100vh;
         }
 
         .slide.active {
             display: grid;
-            animation: fade .35s ease;
+            animation: fade .32s ease
         }
 
         @keyframes fade {
             from {
                 opacity: 0;
-                transform: translateY(6px)
+                transform: translateY(8px)
             }
 
             to {
@@ -71,11 +66,11 @@
         h1,
         h2,
         h3 {
-            margin: 0 0 .3em
+            margin: 0 0 .35em
         }
 
         h1 {
-            font-size: clamp(24px, 6vw, 44px);
+            font-size: clamp(24px, 5.6vw, 44px);
             line-height: 1.15
         }
 
@@ -88,10 +83,10 @@
         }
 
         p {
-            margin: .2em 0 .6em;
+            margin: .25em 0 .7em;
             color: var(--fg);
-            font-size: clamp(15px, 3.8vw, 18px);
-            line-height: 1.6
+            font-size: clamp(15px, 3.7vw, 18px);
+            line-height: 1.65
         }
 
         ul,
@@ -102,8 +97,8 @@
 
         li {
             margin: .25em 0;
-            font-size: clamp(15px, 3.8vw, 18px);
-            line-height: 1.6
+            font-size: clamp(15px, 3.7vw, 18px);
+            line-height: 1.65
         }
 
         .muted {
@@ -112,7 +107,7 @@
 
         .tag {
             display: inline-block;
-            padding: .2em .55em;
+            padding: .18em .55em;
             border: 1px solid #334155;
             border-radius: 999px;
             color: #cbd5e1;
@@ -143,16 +138,16 @@
 
         .card {
             background: linear-gradient(180deg, var(--card), var(--card2));
-            border: 1px solid #1f2937;
+            border: 1px solid var(--line);
             border-radius: 14px;
             padding: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .35)
         }
 
         .cta {
             display: inline-block;
-            background: linear-gradient(90deg, var(--accent), #16a34a);
-            color: #052e16;
+            background: linear-gradient(90deg, var(--axa), #22c55e);
+            color: #021b33;
             padding: .6em 1em;
             border-radius: 10px;
             font-weight: 700
@@ -167,7 +162,6 @@
             padding: .25em .45em
         }
 
-        /* progress + footer */
         .footer {
             display: flex;
             justify-content: space-between;
@@ -189,7 +183,6 @@
             background: linear-gradient(90deg, var(--accent2), #22c55e)
         }
 
-        /* table style */
         table {
             width: 100%;
             border-collapse: separate;
@@ -205,7 +198,7 @@
 
         tr {
             background: #0b1326;
-            border: 1px solid #1f2937
+            border: 1px solid var(--line)
         }
 
         th {
@@ -220,106 +213,6 @@
             border-radius: 8px
         }
 
-        /* PRINT MODE — CRITICAL FIXES BELOW */
-        @media print {
-
-            html,
-            body {
-                background: #fff !important;
-                color: #111 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                height: auto !important;
-                overflow: visible !important;
-            }
-
-            .deck {
-                height: auto !important;
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-
-            .slide {
-                display: block !important;
-                height: auto !important;
-                width: 100% !important;
-                padding: 1in 0.8in !important;
-                /* Print-friendly margins */
-                margin-bottom: 0.5in !important;
-                page-break-after: always !important;
-                /* Force page break after each slide */
-                break-inside: avoid !important;
-                box-shadow: none !important;
-                background: #fff !important;
-                border: 1px solid #ddd !important;
-            }
-
-            .slide:last-child {
-                page-break-after: avoid !important;
-                /* Don't force blank page at end */
-            }
-
-            /* Hide all UI elements in print */
-            .nav,
-            .footer,
-            .hint,
-            .bar,
-            .btn,
-            .card>div[style*="rgba(34, 197, 94)"] {
-                /* Hide讲师备注 cards */
-                display: none !important;
-            }
-
-            /* Fix text colors */
-            h1,
-            h2,
-            h3,
-            p,
-            ul,
-            li,
-            th,
-            td {
-                color: #111 !important;
-                text-shadow: none !important;
-            }
-
-            /* Restore card styling for print */
-            .card {
-                background: #fff !important;
-                border: 1px solid #ccc !important;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
-                margin-bottom: 0.5in !important;
-            }
-
-            /* Ensure tables fit */
-            table {
-                width: 100% !important;
-                font-size: 12pt !important;
-            }
-
-            /* Make sure long content doesn’t break awkwardly */
-            * {
-                orphans: 3;
-                widows: 3;
-            }
-
-            /* Remove gradients */
-            .card,
-            .card>h3,
-            .card>p,
-            .card>ul {
-                background: transparent !important;
-                background-image: none !important;
-            }
-
-            /* Make links readable */
-            a {
-                color: #0066cc !important;
-                text-decoration: underline !important;
-            }
-        }
-
-        /* nav */
         .nav {
             position: fixed;
             inset: auto 0 0 0;
@@ -330,12 +223,12 @@
             padding: .6rem;
             background: rgba(2, 6, 23, .55);
             backdrop-filter: blur(8px);
-            border-top: 1px solid #1f2937
+            border-top: 1px solid var(--line)
         }
 
         .btn {
             background: #0b1326;
-            border: 1px solid #1f2937;
+            border: 1px solid var(--line);
             color: #e5e7eb;
             border-radius: 10px;
             padding: .55em .9em;
@@ -355,678 +248,665 @@
             color: #9ca3af;
             font-size: 12px
         }
+
+        /* print */
+        @media print {
+
+            html,
+            body {
+                background: #fff !important;
+                color: #111 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                overflow: visible !important
+            }
+
+            .deck {
+                height: auto !important
+            }
+
+            .slide {
+                display: block !important;
+                height: auto !important;
+                width: 100% !important;
+                padding: 1in .8in !important;
+                margin-bottom: .5in !important;
+                page-break-after: always !important;
+                break-inside: avoid !important;
+                box-shadow: none !important;
+                background: #fff !important;
+                border: 1px solid #ddd !important
+            }
+
+            .slide:last-child {
+                page-break-after: avoid !important
+            }
+
+            .nav,
+            .footer,
+            .hint,
+            .bar {
+                display: none !important
+            }
+
+            h1,
+            h2,
+            h3,
+            p,
+            ul,
+            li,
+            th,
+            td {
+                color: #111 !important;
+                text-shadow: none !important
+            }
+
+            .card {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, .1) !important;
+                margin-bottom: .35in !important
+            }
+
+            table {
+                width: 100% !important;
+                font-size: 12pt !important
+            }
+
+            * {
+                orphans: 3;
+                widows: 3
+            }
+
+            a {
+                color: #0066cc !important;
+                text-decoration: underline !important
+            }
+        }
+
+        /* tiny badges */
+        .axa-badge {
+            display: inline-block;
+            padding: .2em .5em;
+            border-radius: 6px;
+            background: rgba(0, 75, 141, .15);
+            border: 1px solid rgba(0, 75, 141, .5);
+            color: #93c5fd;
+            font-weight: 700;
+            font-size: .85em
+        }
+
+        .hl {
+            color: #86efac;
+            font-weight: 700
+        }
+
+        .q {
+            font-style: italic;
+            color: #a5b4fc
+        }
     </style>
 </head>
 
 <body>
     <div class="deck" id="deck">
         <!-- 1 -->
-        <section class="slide active" data-title="标题">
+        <section class="slide active" data-title="標題">
             <header>
-                <h1>认识你的客户（KYC）—保险新人培训</h1>
+                <h1>KYC——AXA香港新人培訓（60分鐘）</h1>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>课程目标</h3>
+                    <h3>培訓目標</h3>
                     <ul>
-                        <li>掌握“KYC五步法”，把聊天变成结构化面谈</li>
-                        <li>会用子女教育与财富传承两张KYC表</li>
-                        <li>输出1页“目标-预算-风险”摘要与3档方案</li>
+                        <li>建立AXA標準的客戶分層框架</li>
+                        <li>掌握「收入/支出/負債/資產/風險」五維挖掘</li>
+                        <li>輸出1頁KYC摘要＋3檔設計方案</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>时间安排（50分钟）</h3>
+                    <h3>時間安排（60’）</h3>
                     <ul>
-                        <li>开场与框架 13分钟′</li>
-                        <li>工具表拆解 12分钟′</li>
-                        <li>休息 10分钟′</li>
-                        <li>两大案例 12分钟′</li>
-                        <li>评估与匹配 8分钟′</li>
-                        <li>合规与Q&A 5分钟′</li>
+                        <li>1. 客戶分層 15’</li>
+                        <li>2. 需求分析 15’</li>
+                        <li>3. 設計方案 15’</li>
+                        <li>個案分享與練習 12’＋Q&A 3’</li>
                     </ul>
-                    <p class="muted">提示：电脑按 ← → 切换；手机左右滑动；或用键盘 <span class="kbd">Space</span></p>
+                    <p class="muted">提示：鍵盤 ← → 或空白鍵切換；可打印PDF帶走</p>
                 </div>
             </main>
             <footer class="footer">
-                <span class="muted">讲师备注：破冰+合规声明</span>
-                <div class="bar" style="width:40%"><i style="width:4%"></i></div>
+                <span class="axa-badge">AXA Hong Kong</span>
+                <div class="bar" style="width:42%"><i style="width:5%"></i></div>
             </footer>
         </section>
 
         <!-- 2 -->
-        <section class="slide" data-title="为什么KYC决定成单质量">
+        <section class="slide" data-title="KYC定義">
             <header>
-                <h2>为什么KYC决定成单质量</h2>
+                <h2>KYC是什麼？為什麼決定成單質量</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>好方案公式</h3>
-                    <p>方案价值 = 客户目标 × 资源约束 × 风险承受 × 时间轴匹配</p>
+                    <h3>AXA視角</h3>
                     <ul>
-                        <li>把“愿望”落成“金额+日期”</li>
-                        <li>以现金流表达预算，先保底再增益</li>
-                        <li>记录-复述-确认，形成可复盘资料</li>
+                        <li>KYC = 合規信息收集＋需求澄清＋風險適配</li>
+                        <li>每次面談產出可追溯的紀要與同意</li>
+                        <li>方案價值 = 客戶目標 × 現金流可行 × 風險承受 × 時間軸匹配</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>常见败因</h3>
+                    <h3>常見失誤</h3>
                     <ul>
-                        <li>没问清婚史/负债/用款时间</li>
-                        <li>产品先行，忽略现金流与风险</li>
-                        <li>无纪要，复访无从谈起</li>
+                        <li>先講產品，後了解現金流/負債</li>
+                        <li>未確認用款時間與優先級</li>
+                        <li>無紀要，無法複盤與跟進</li>
                     </ul>
+                    <p class="muted">原則：記錄-復述-確認，話語用客戶的詞。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">互动：你最近一次失单，缺了哪块信息？</span>
-                <div class="bar" style="width:40%"><i style="width:12%"></i></div>
+            <footer class="footer"><span class="muted">活動：最近一次失單，缺了哪塊信息？</span>
+                <div class="bar" style="width:42%"><i style="width:13%"></i></div>
             </footer>
         </section>
 
         <!-- 3 -->
-        <section class="slide" data-title="KYC五步法">
+        <section class="slide" data-title="客戶分層">
             <header>
-                <h2>KYC五步法总览</h2>
+                <h2>一、客戶分層（Segmentation）</h2>
             </header>
             <main class="grid cols-3">
                 <div class="card">
-                    <h3>1 建立信任</h3>
+                    <h3>家庭生命週期</h3>
                     <ul>
-                        <li>议程设定与保密</li>
-                        <li>边界与时长</li>
+                        <li>單身/新婚/育兒/子女教育/空巢/退休/傳承</li>
+                        <li>對應焦點：保障→儲蓄→教育→退休→傳承</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>2 画像与时间轴</h3>
+                    <h3>財務能力維度</h3>
                     <ul>
-                        <li>家庭/资产/负债/现金流</li>
-                        <li>事件时间表</li>
+                        <li>年家庭稅後收入：<span class="hl">≤60萬 / 60–150萬 / 150萬+</span></li>
+                        <li>可投現金流比率：可投/稅後 ≥ 10%｜15%｜25%</li>
+                        <li>負債率：本息/收入 ≤ 30%｜30–50%｜>50%</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>3 目标拆解</h3>
+                    <h3>風險暴露維度</h3>
                     <ul>
-                        <li>金额M/期限D</li>
-                        <li>优先级与弹性</li>
+                        <li>身故/疾病對家庭現金流的影響</li>
+                        <li>事業/法人/按揭/稅務等法律風險</li>
+                        <li>流動性儲備：6–12個月支出是否獨立</li>
                     </ul>
-                </div>
-                <div class="card">
-                    <h3>4 风险与偏好</h3>
-                    <ul>
-                        <li>风险承受度</li>
-                        <li>流动性与经验</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>5 复述与确认</h3>
-                    <ul>
-                        <li>量化记录</li>
-                        <li>下一步与清单</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>产出</h3>
-                    <p>1页摘要 + 3档方案（保底/标准/进阶）</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">技巧：用客户的词复述一次</span>
-                <div class="bar" style="width:40%"><i style="width:20%"></i></div>
+            <footer class="footer"><span class="muted">輸出：給每位客戶貼上「生命週期 × 財務 × 風險」三維標籤</span>
+                <div class="bar" style="width:42%"><i style="width:21%"></i></div>
             </footer>
         </section>
 
         <!-- 4 -->
-        <section class="slide" data-title="面谈开场话术">
+        <section class="slide" data-title="分層工具表">
             <header>
-                <h2>面谈开场标准话术</h2>
+                <h2>分層速查卡（面談2分鐘完成）</h2>
             </header>
             <main class="card">
-                <p>“今天我們花30到40分鐘，想好好聽聽您的家庭情況和未來打算——不是來推產品，而是幫您理清楚：哪些目標是確定的？哪些地方還缺一塊拼圖？所有資訊只用於給您做一份專屬規劃摘要，絕不外洩，也完全尊重您的選擇。任何問題，您都可以跳過，或者說‘我還沒想好’。”
-                </p>
-                <ul>
-                    <li><span class="tag">同意与记录</span> 請客戶確認信息使用範圍與目的</li>
-                    <li><span class="tag">议程</span> 聆聽 → 確認理解 → 共同定下一步</li>
-                </ul>
-                <p class="muted" style="margin-top:1rem;">💡 小提醒：開場時微笑 + 停頓2秒，比說完一長串話更有力量。</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>維度</th>
+                            <th>問題</th>
+                            <th>標籤示例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>收入</td>
+                            <td>主要收入來源與穩定性？年稅後？</td>
+                            <td>工薪/自僱/企業主；穩定/波動</td>
+                        </tr>
+                        <tr>
+                            <td>支出</td>
+                            <td>剛性支出（月供、學費、長輩）？</td>
+                            <td>剛性比 40%/60%/80%</td>
+                        </tr>
+                        <tr>
+                            <td>負債</td>
+                            <td>房貸/商貸/卡債利率與期限？</td>
+                            <td>低/中/高負債</td>
+                        </tr>
+                        <tr>
+                            <td>資產</td>
+                            <td>現金、投資、物業配置？</td>
+                            <td>現金占比 10/30/50%</td>
+                        </tr>
+                        <tr>
+                            <td>風險</td>
+                            <td>若身故或重疾，家庭收入缺口？</td>
+                            <td>缺口：小於1年/1–3年/3年以上</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="muted">目標：30秒判斷層級，避免一上來談產品。</p>
             </main>
-
-            <!-- 👇 讲师专属提示卡 —— 不影響 footer，不影響進度條 -->
-            <div
-                style="margin: 1.5rem 0; padding: 0.8rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
-                <strong style="color:#22c55e; display:block; margin-bottom:0.5rem;">讲师备注 🎯</strong>
-                <ul style="padding-left:1.2em; margin:0.3em 0; line-height:1.6;">
-                    <li>🔹 <strong>不要急著說完這段話</strong>，說完後<strong>沉默2秒</strong>，讓客戶感覺「他有空間決定要不要繼續」。</li>
-                    <li>🔹 如果客戶問：“那你到底想賣什麼？” 回應：<br><em>“其實我現在也不知道，等聽完您說完，我才知道該怎麼幫您。”</em></li>
-                </ul>
-                <p class="muted" style="font-size:0.9em; margin-top:0.6rem; margin-bottom:0;">※ 語氣比內容更重要 ——
-                    真誠的停頓，勝過完美的話術。</p>
-            </div>
-
-            <footer class="footer"><span class="muted">道具：名片、合规提示卡、记录表</span>
-                <div class="bar" style="width:40%"><i style="width:28%"></i></div>
+            <footer class="footer"><span class="muted">工具：貼紙標籤或CRM字段即填即存</span>
+                <div class="bar" style="width:42%"><i style="width:29%"></i></div>
             </footer>
         </section>
 
         <!-- 5 -->
-        <section class="slide" data-title="画像四象限">
+        <section class="slide" data-title="需求分析">
             <header>
-                <h2>画像四象限与现金流</h2>
+                <h2>二、需求分析（五維挖掘）</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>四象限</h3>
+                    <h3>五維框架</h3>
                     <ul>
-                        <li>家庭：婚姻、受抚养人、赡养人、决策人</li>
-                        <li>财务：收入稳定性、支出结构、负债与偿付比</li>
-                        <li>资产：现金/权益/不动产/保障缺口</li>
-                        <li>风险：健康/职业/法律/经营暴露</li>
+                        <li>收入｜支出｜負債｜資產｜風險事件</li>
+                        <li>量化到「金額M＋日期D＋成功概率P＋靈活度F」</li>
+                        <li class="q">「如果收入中斷3個月，家庭能撐多久？」</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>可投资现金流</h3>
-                    <p>年可投 = 税后收入 − 刚性支出 − 必选保障</p>
-
-                    <div style="margin-top: 1rem; display: grid; gap: 0.75rem;">
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
-                            <span>税后收入</span>
-                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
-                        </div>
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
-                            <span>刚性支出</span>
-                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
-                        </div>
-                        <div
-                            style="display: flex; justify-content: space-between; padding: 0.75rem; background: #0b1326; border-radius: 8px; border: 1px solid #1f2937;">
-                            <span>保障保费</span>
-                            <span style="font-weight: 600; color: var(--fg);">—— 万</span>
-                        </div>
-                    </div>
+                    <h3>提問技巧：背景-難點-暗示-需求</h3>
+                    <ol>
+                        <li>背景：了解現況與目標</li>
+                        <li>難點：找阻礙（現金流/期限/風險）</li>
+                        <li>暗示：提供可行路徑</li>
+                        <li>需求：讓客戶自己說出要什麼</li>
+                    </ol>
+                    <p>例：<span class="q">「孩子3年後赴英讀書（背景），匯率與學費波動（難點）。若有一筆鎖定3–5年保本增長的教育金（暗示），是否更安心？（需求）」</span></p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">练习：3分钟完成同桌画像草表</span>
-                <div class="bar" style="width:40%"><i style="width:36%"></i></div>
+            <footer class="footer"><span class="muted">原則：多問開放題，少下判斷；用客戶語言復述</span>
+                <div class="bar" style="width:42%"><i style="width:38%"></i></div>
             </footer>
         </section>
 
         <!-- 6 -->
-        <section class="slide" data-title="时间轴与事件地图">
+        <section class="slide" data-title="教育與傳承工具表">
             <header>
-                <h2>时间轴与事件地图</h2>
+                <h2>KYC工具表：子女教育｜財富傳承</h2>
             </header>
-            <main class="grid cols-3">
+            <main class="grid cols-2">
                 <div class="card">
-                    <h3>短期 1–3年</h3>
+                    <h3>子女教育（中端客戶）</h3>
                     <ul>
-                        <li>买房/创业/首笔教育</li>
+                        <li>子女人數與升學路徑：本地/海外（英/澳/加/歐）</li>
+                        <li>啟動時間：1–5年｜5–10年｜10年+</li>
+                        <li>教育金來源：現金/定存/基金/壽險/其他</li>
+                        <li>缺口估算：學費＋生活費－現有教育金＝<span class="hl">缺口X</span></li>
                     </ul>
+                    <p class="muted">風險：收入中斷、投資波動、匯率、利率。</p>
                 </div>
                 <div class="card">
-                    <h3>中期 3–10年</h3>
+                    <h3>財富傳承（高端客戶）</h3>
                     <ul>
-                        <li>子女教育/事业扩张</li>
+                        <li>婚姻與家族結構：決策人、受養人、家族企業</li>
+                        <li>資產與流動性：上市/非上市股權、物業、債務</li>
+                        <li>傳承工具：人壽保險｜家族信託｜保險金信託</li>
+                        <li>議題：遺產稅/跨境合規/第三代教育基金</li>
                     </ul>
-                </div>
-                <div class="card">
-                    <h3>长期 10年以上</h3>
-                    <ul>
-                        <li>退休/传承/税务优化</li>
-                    </ul>
-                </div>
-                <div class="card" style="grid-column:1/-1">
-                    <h3>T-D清单</h3>
-                    <p>为每个事件记录 金额(M) + 截止日期(D) + 成功概率(P) + 灵活度(F)</p>
+                    <p class="muted">輸出：傳承目標表與受益人設計草案。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">工具：事件→账户一一对应</span>
-                <div class="bar" style="width:40%"><i style="width:44%"></i></div>
+            <footer class="footer"><span class="muted">行動：面談時用兩張表單引導，面後錄入CRM</span>
+                <div class="bar" style="width:42%"><i style="width:46%"></i></div>
             </footer>
         </section>
 
         <!-- 7 -->
-        <section class="slide" data-title="风险承受与流动性">
+        <section class="slide" data-title="設計方案方法">
             <header>
-                <h2>风险承受与流动性测试</h2>
+                <h2>三、設計方案（3檔配置）</h2>
             </header>
-            <main class="grid cols-2">
+            <main class="grid cols-3">
                 <div class="card">
-                    <h3>提问范例</h3>
+                    <h3>保底（風險優先）</h3>
                     <ul>
-                        <li><strong>“如果一笔钱跌了10%，您第一反应是？”</strong><br><em>（恐慌卖出？还是等一等？）</em></li>
-                        <li><strong>“一笔钱要锁3–5年，您安心吗？”</strong><br><em>（不是问锁定期限，而是探討情緒）</em></li>
-                        <li><strong>“收入突然断了，家里能撑多久不慌？”</strong><br><em>（常聽到回答：‘大概2個月’或‘我先生有存款’）</em></li>
+                        <li>應急金：6–12個月支出</li>
+                        <li>保障：醫療/重疾/人壽補足缺口</li>
+                        <li>教育金/退休金的最低確定額</li>
                     </ul>
-                    <p class="muted" style="margin-top:1.5rem; font-size: clamp(14px, 3.5vw, 16px);">
-                        💡 别急着记答案——<br>
-                        <span class="kbd">“您为什么这么想呢？”</span> 才是钥匙。
-                    </p>
                 </div>
-
                 <div class="card">
-                    <h3>输出</h3>
+                    <h3>標準（目標對齊）</h3>
                     <ul>
-                        <li>风险标签：保守 / 均衡 / 进取</li>
-                        <li>流动性池：6–12个月支出独立账户</li>
+                        <li>按目標M、期限D設立專戶</li>
+                        <li>以年繳現金流為主，保單貸款作彈性</li>
+                        <li>海外/本地佈局與匯率對沖</li>
                     </ul>
-
-                    <!-- 专业心法：极致精简 -->
-                    <p class="muted" style="margin-top:1.5rem; font-size: clamp(14px, 3.5vw, 16px);">
-                        <strong style="color:var(--accent);">风险 = 情绪稳定度 × 控制感</strong><br>
-                        —— 有时这不是数学题，是人性题。
-                    </p>
+                </div>
+                <div class="card">
+                    <h3>進階（增益與傳承）</h3>
+                    <ul>
+                        <li>高現金價值儲蓄險＋定投組合</li>
+                        <li>保險金信託/家族信託銜接</li>
+                        <li>稅務與資產保全設計</li>
+                    </ul>
                 </div>
             </main>
-
-            <!-- 👇 讲师备注：浓缩为一句灵魂，极致精炼，高质感 -->
-            <div
-                style="margin: 1.5rem 0; padding: 1rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
-                <strong style="color:#22c55e; display:block; margin-bottom: 0.6rem;">讲师备注 🎯</strong>
-
-                <p style="margin: 0 0 0.8rem 0; line-height: 1.7;">
-                    📌 不是问出答案，是听懂那些「没说出口的害怕」。
-                </p>
-
-                <div
-                    style="border-left: 3px solid var(--accent); padding-left: 1rem; margin-top: 0.6rem; color: #e5e7eb; font-style: normal;">
-                    <p style="margin: 0; line-height: 1.6; font-size: clamp(15px, 3.8vw, 17px);">
-                        当他说：<em>“我有点怕……”</em><br>
-                        你不必说话。<br>
-                        只需点头：<br>
-                        <strong>“嗯，我知道你在怕什么。”</strong>
-                    </p>
-                </div>
-            </div>
-
-            <footer class="footer">
-                <span class="muted">注意：先应急与保障，再投资</span>
-                <div class="bar" style="width:40%"><i style="width:52%"></i></div>
+            <footer class="footer"><span class="muted">呈現：1頁「目標-預算-風險」摘要＋三檔表格</span>
+                <div class="bar" style="width:42%"><i style="width:54%"></i></div>
             </footer>
         </section>
 
         <!-- 8 -->
-        <section class="slide" data-title="子女教育KYC（结构）">
+        <section class="slide" data-title="個案分享">
             <header>
-                <h2>子女教育KYC表：结构与关键问题</h2>
+                <h2>個案分享：以教育金切入儲蓄險</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>信息区块</h3>
+                    <h3>背景</h3>
                     <ul>
-                        <li>子女人数与学段、留学起点、目标国家</li>
-                        <li>预计使用年限：1–5 / 5–10 / 10年以上</li>
-                        <li>预算区间与弹性、是否已有计划</li>
+                        <li>客戶：35歲夫妻，1名4歲子女；年稅後家庭收入120萬港幣</li>
+                        <li>計劃：6年後赴英中學；預估學費＋生活費合計每年40萬，6年共240萬</li>
+                        <li>現況：定存80萬，基金帳戶30萬，無教育專戶；房貸本息月比35%</li>
+                    </ul>
+                    <h3>難點</h3>
+                    <ul>
+                        <li>匯率與投資波動，擔心資金不足</li>
+                        <li>若重疾/身故，教育計劃可能中斷</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>三问定方向</h3>
-                    <ol>
-                        <li>最早哪一年用钱？一次性还是分批？</li>
-                        <li>最低要保证多少？最多能投入多少？</li>
-                        <li>若录取更好学校，预算能上浮 X% 吗？</li>
-                    </ol>
+                    <h3>暗示 → 需求</h3>
+                    <p class="q">「若把一部分現金流放入高現金價值的儲蓄壽險，鎖定3–5年繳費，現金價值與身故保障雙備用，您會不會更安心？」</p>
+                    <h3>方案（摘要）</h3>
+                    <ul>
+                        <li>保底：醫療/重疾補足；應急金9個月</li>
+                        <li>標準：每年繳20萬×5年儲蓄險，6–8年後分階段提取作教育金</li>
+                        <li>進階：增加人壽覆蓋至家庭年支出×10；設立保險金信託指定受益人與提取節點</li>
+                    </ul>
+                    <p class="muted">結果：客戶選擇標準＋部分進階；教育金與保障同時落地。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">记录：金额与日期优先</span>
-                <div class="bar" style="width:40%"><i style="width:60%"></i></div>
+            <footer class="footer"><span class="muted">重點：用「教育專戶」命名帳戶，讓錢有任務</span>
+                <div class="bar" style="width:42%"><i style="width:62%"></i></div>
             </footer>
         </section>
 
         <!-- 9 -->
-        <section class="slide" data-title="子女教育KYC（资金与风险）">
+        <section class="slide" data-title="練習導引">
             <header>
-                <h2>子女教育：资金现状与风险</h2>
+                <h2>小組練習：分層 × 挖掘 × 方案</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>资金盘点</h3>
-                    <ul>
-                        <li>当前准备金：—— 万；缺口：—— 万</li>
-                        <li>现用工具：现金/基金定投/年金/增额终身</li>
-                        <li>多币种与汇率计划</li>
-                    </ul>
+                    <h3>步驟（每組3人，12分鐘）</h3>
+                    <ol>
+                        <li>角色扮演：顧問/客戶/觀察者</li>
+                        <li>用分層速查卡完成標籤（2’）</li>
+                        <li>按五維挖掘提問（6’）</li>
+                        <li>輸出1頁摘要與3檔方案（4’）</li>
+                    </ol>
                 </div>
                 <div class="card">
-                    <h3>核心风险与对策</h3>
+                    <h3>提問清單（必問）</h3>
                     <ul>
-                        <li>市场回撤撞车用款年 → 提前降波+保底账户</li>
-                        <li>学费上涨/通胀 → 年度调增比率</li>
-                        <li>收入中断 → 保障账户与保费豁免</li>
+                        <li>收入來源與穩定性？今年可投現金流？</li>
+                        <li>每月剛性支出與房貸比？</li>
+                        <li>負債總額、利率與期限？</li>
+                        <li>資產分佈：現金/基金/物業/股權？</li>
+                        <li>身故/重疾對家庭經濟的影響金額？</li>
+                        <li>教育/退休/置業目標的金額M與日期D？</li>
                     </ul>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">输出：三桶—保底/增益/机动</span>
-                <div class="bar" style="width:40%"><i style="width:68%"></i></div>
+            <footer class="footer"><span class="muted">交付：把摘要拍照上傳群組，互評要點與風險適配</span>
+                <div class="bar" style="width:42%"><i style="width:71%"></i></div>
             </footer>
         </section>
 
         <!-- 10 -->
-        <section class="slide" data-title="财富传承KYC（结构）">
+        <section class="slide" data-title="KYC表單mini版">
             <header>
-                <h2>财富传承KYC表：结构与关键问题</h2>
+                <h2>現場填寫：KYC摘要</h2>
             </header>
-            <main class="grid cols-2">
-                <div class="card">
-                    <h3>信息区块</h3>
-                    <ul>
-                        <li>婚姻与亲属结构；是否再婚/重组家庭</li>
-                        <li>资产：动产/不动产/股权；负债与质押</li>
-                        <li>关注点：婚变、债务、保密、效率</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>工具与安排</h3>
-                    <ul>
-                        <li>指定受益人/遗嘱/监护</li>
-                        <li>人寿保险金专款、保险金信托/家族信托</li>
-                        <li>关键人保险与股权回购金池</li>
-                    </ul>
-                </div>
+            <main class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>內容</th>
+                            <th>指標/備註</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>家庭概況</td>
+                            <td>婚姻｜受養人｜決策人</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>收入/支出</td>
+                            <td>年稅後____；剛性支出____；可投____</td>
+                            <td>可投比≥15%為佳</td>
+                        </tr>
+                        <tr>
+                            <td>負債</td>
+                            <td>總額____；月本息/收入____%</td>
+                            <td>建議≤40%</td>
+                        </tr>
+                        <tr>
+                            <td>資產</td>
+                            <td>現金____；投資____；物業____</td>
+                            <td>現金占比10–30%</td>
+                        </tr>
+                        <tr>
+                            <td>風險缺口</td>
+                            <td>身故缺口____；重疾缺口____</td>
+                            <td>=責任年支出×年數</td>
+                        </tr>
+                        <tr>
+                            <td>目標</td>
+                            <td>目標M____；日期D____；優先級____</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>風險承受</td>
+                            <td>保守/均衡/進取；流動性月數____</td>
+                            <td>≥6–12個月</td>
+                        </tr>
+                        <tr>
+                            <td>方案</td>
+                            <td>保底/標準/進階（金額與產品）</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>同意與下一步</td>
+                            <td>資料使用範圍｜下次會面日期</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
             </main>
-            <footer class="footer"><span class="muted">提醒：先厘清法定继承边界</span>
-                <div class="bar" style="width:40%"><i style="width:76%"></i></div>
+            <footer class="footer"><span class="muted">合規：明確資料用途與保存，尊重客戶選擇</span>
+                <div class="bar" style="width:42%"><i style="width:79%"></i></div>
             </footer>
         </section>
 
         <!-- 11 -->
-        <section class="slide" data-title="案例A 教育金">
+        <section class="slide" data-title="話術庫">
             <header>
-                <h2>案例A：内地家庭的子女海外教育金规划</h2>
+                <h2>高效面談話術</h2>
             </header>
-            <main class="grid cols-3">
+            <main class="grid cols-2">
                 <div class="card">
-                    <h3>客户画像</h3>
-                    <ul>
-                        <li>40岁上海企业主，独女8岁，国际学校年费约25万</li>
-                        <li>年可投120万，但担心：① 每年5万美元购汇额度不够；② 国内收益跑不赢通胀</li>
-                        <li>目标：18岁赴美Top 30大学，总预算300万人民币</li>
-                        <li><em>真实焦虑：</em>“钱放国内怕出不去，放国外怕没人管。”</li>
-                    </ul>
+                    <h3>開場</h3>
+                    <p>「今天用30–40分鐘了解您家庭與目標；不是推產品，而是整理一份專屬摘要。任何問題您可跳過。」</p>
+                    <h3>復述</h3>
+                    <p>「讓我確認一下：您希望在<span class="hl">D</span>前準備<span class="hl">M</span>教育金，同時控制風險在可承受範圍，對嗎？」</p>
                 </div>
-
                 <div class="card">
-                    <h3>三桶方案</h3>
+                    <h3>處理疑慮</h3>
                     <ul>
-                        <li><strong>保底桶（120万）：</strong>美元终身寿险 —— 现金价值锁定，18岁可贷款直付海外</li>
-                        <li><strong>增益桶（90万）：</strong>ILP全球指数基金 —— 对冲贬值，年化7–8%</li>
-                        <li><strong>机动桶（30万）：</strong>美元货币基金 —— 应急学费、汇率波动</li>
+                        <li>價格：「我們先看現金流能承擔多少，再決定檔位。」</li>
+                        <li>流動性：「教育金會分期提取，保留應急池不動。」</li>
+                        <li>風險：「若突發重疾/身故，方案仍能自動兌現。」</li>
                     </ul>
-                    <p class="muted" style="margin-top:0.8rem;">💡 不是存钱上学，是建一条<span
-                            style="color:var(--accent)">合法跨境通道</span>。</p>
-                </div>
-
-                <div class="card">
-                    <h3>执行节奏</h3>
-                    <ul>
-                        <li>0–8年：持续投入 + 再平衡</li>
-                        <li>9–14年：降低波动，转固收</li>
-                        <li>15–17年：按学年提款，绕开5万美金限额</li>
-                    </ul>
-                </div>
-
-                <div class="card" style="grid-column:1/-1">
-                    <h3>话术</h3>
-
-                    <!-- 讲师提示：用小字号、浅色、独立段落，弱化但保留 -->
-                    <p
-                        style="margin: 0 0 1rem 0; font-size: clamp(14px, 3.5vw, 16px); color: var(--muted); line-height: 1.6;">
-                        📌 别跟客户说“这是保险”，他们听得耳朵起茧。
-                    </p>
-
-                    <!-- 客户话术：主文本，放大、留白、呼吸感 -->
-                    <p style="margin: 0; font-size: clamp(15px, 3.8vw, 17px); line-height: 1.8; color: var(--fg);">
-                        “您不是在买保险，<br>
-                        是为女儿建一套<span style='color:var(--accent)'>不受政策影响的财务系统</span>。<br>
-                        孩子上大学那天，钱已经在那边了——<br>
-                        没有审批，没有等待，只有交付。”
-                    </p>
+                    <p class="muted">關鍵：停頓2秒，讓客戶做決定。</p>
                 </div>
             </main>
-            <footer class="footer">
-                <span class="muted">练习：若人民币兑美元跌至8.5，需多存多少才能覆盖？</span>
-                <div class="bar" style="width:40%"><i style="width:84%"></i></div>
+            <footer class="footer"><span class="muted">工具：把關鍵句存在手機備忘錄，面談即讀</span>
+                <div class="bar" style="width:42%"><i style="width:88%"></i></div>
             </footer>
         </section>
 
         <!-- 12 -->
-        <section class="slide" data-title="案例B 传承">
+        <section class="slide" data-title="敏感話題話術">
             <header>
-                <h2>案例B：内地企业家的跨境财富传承</h2>
+                <h2>如何優雅提問敏感話題？</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>客户画像与风险</h3>
+                    <h3>原則：軟化 + 合理化 + 價值化</h3>
                     <ul>
-                        <li>55岁浙江制造老板，净资产3000万，资产集中于房产、股权、理财</li>
-                        <li>配偶内地户籍，独子26岁已移民加拿大，未来或持美国绿卡</li>
-                        <li>无遗嘱，公司负债800万，法人担保中</li>
-                        <li><em>真实恐惧：</em>“我走后，公司被追债？儿子被IRS查税？老婆拿不到钱？”</li>
-                        <li><em>深层诉求：</em>“别让我的一生，变成一场法律纠纷。”</li>
+                        <li><strong>軟化</strong>：用「很多客戶…」、「我們通常建議…」降低壓迫感</li>
+                        <li><strong>合理化</strong>：說明「這是為了確保方案安全／合規／有效」</li>
+                        <li><strong>價值化</strong>：強調「了解越完整，越能保護您和家人」</li>
                     </ul>
+                    <p class="q">例：<br>「很多家長在規劃教育金時，會擔心突發狀況影響計劃，所以我們通常會確認一下家庭收入結構，這樣萬一有變化，方案還能自動兜底。」</p>
                 </div>
-
                 <div class="card">
-                    <h3>方案骨架</h3>
+                    <h3>高敏感問題話術模板</h3>
                     <ul>
-                        <li><strong>离岸终身寿险（美元）：</strong>投保500万美元，受益人设为家族信托，赔付金直出境外，不进内地遗产</li>
-                        <li><strong>开曼家族信托：</strong>香港受托管理 —— 儿子30岁方可动用本金；配偶享生活费+居住权；债务完全隔离</li>
-                        <li><strong>关键人保险：</strong>保单现金价值作为股权回购基金，防企业被迫清算</li>
-                        <li><strong>税务合规：</strong>完成CRS申报，规避FATCA风险</li>
+                        <li><strong>收入波動</strong>：<br>「您覺得未來3年收入穩定性如何？我們好預留緩衝空間。」</li>
+                        <li><strong>負債壓力</strong>：<br>「房貸／卡債目前佔收入比例大概多少？我們看看是否需要優先處理。」</li>
+                        <li><strong>婚姻／繼承</strong>：<br>「如果未來資產要傳給孩子或配偶，您希望怎麼安排才安心？」</li>
+                        <li><strong>健康告知</strong>：<br>「為了確保保障能順利生效，我們需要確認一下健康狀況，這部分完全保密。」</li>
                     </ul>
-                    <p class="muted" style="margin-top:0.8rem;">💡“真正的传承，不是留钱，是让钱<strong>不被任何人夺走</strong>。”</p>
+                    <p class="muted">技巧：說完後停頓3秒，給客戶空間；若客戶猶豫，可說「這部分可以之後補，我們先看大方向。」</p>
                 </div>
             </main>
-
-            <div class="card" style="grid-column:1/-1">
-                <h3>话术</h3>
-                <p style="margin:0; line-height:1.8; font-size: clamp(15px, 3.8vw, 17px); color: var(--fg);">
-                    我们不藏钱，<br>
-                    只给它一件<span style="font-weight:600;color:var(--accent)">防弹衣</span>——<br>
-                    它还在那儿，<br>
-                    但别人碰不到。<br><br>
-
-                    您走后，家人不需要争吵、诉讼或等待。<br>
-                    他们只需平静地说：<br>
-                    <strong>“爸爸没留麻烦，只留了选择。”</strong>
-                </p>
-            </div>
-
-            <footer class="footer">
-                <span class="muted">落地：提供《跨境传承检查清单》——含受益人声明书、信托摘要、CRS记录、资产隔离协议模板</span>
-                <div class="bar" style="width:40%"><i style="width:92%"></i></div>
+            <footer class="footer"><span class="muted">關鍵：客戶不是拒絕問題，而是拒絕「被審問」</span>
+                <div class="bar" style="width:42%"><i style="width:92%"></i></div>
             </footer>
         </section>
+
         <!-- 13 -->
-        <section class="slide" data-title="评估雷达与匹配矩阵">
+        <section class="slide" data-title="觀察與應對">
             <header>
-                <h2>风险评估雷达与方案匹配矩阵</h2>
+                <h2>觀察客戶反應，靈活調整策略</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>雷达维度</h3>
-                    <ul>
-                        <li>收入稳定/负债率/保障缺口</li>
-                        <li>应急与流动性/投资经验/心理容忍</li>
-                    </ul>
-                    <p class="muted">红灯先补：应急金与保障；黄灯控波动；绿灯可进取</p>
+                    <h3>常見非語言訊號與應對</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>訊號</th>
+                                <th>可能含義</th>
+                                <th>應對策略</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>眼神迴避</td>
+                                <td>不適／隱瞞／思考</td>
+                                <td>切換輕鬆話題，或說「這部分不急，我們稍後再聊」</td>
+                            </tr>
+                            <tr>
+                                <td>身體後傾</td>
+                                <td>防禦／抗拒</td>
+                                <td>降低語速，軟化語氣，強調「您主導節奏」</td>
+                            </tr>
+                            <tr>
+                                <td>頻繁看手機／手錶</td>
+                                <td>時間壓力／分心</td>
+                                <td>主動提議：「我們先聚焦最重要的2個目標，15分鐘搞定？」</td>
+                            </tr>
+                            <tr>
+                                <td>突然沉默／嘆氣</td>
+                                <td>壓力／回憶痛苦經歷</td>
+                                <td>共情：「這部分確實不容易談，您慢慢說，我在聽。」</td>
+                            </tr>
+                            <tr>
+                                <td>主動傾身／點頭</td>
+                                <td>認同／感興趣</td>
+                                <td>趁勢深入：「您剛提到的XX，我們可以具體規劃一下。」</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="card">
-                    <h3>匹配矩阵</h3>
-                    <ul>
-                        <li>长期刚性：终身/年金/教育金/固收</li>
-                        <li>中期弹性：基金定投/到期目标基金/可转债</li>
-                        <li>短期与应急：货币/短债/高流动账户</li>
-                    </ul>
+                    <h3>建立信任的3個觀察點</h3>
+                    <ol>
+                        <li><strong>稱呼偏好</strong>：客戶喜歡被叫「陳生」還是「Chris」？模仿其用語風格。</li>
+                        <li><strong>決策節奏</strong>：喜歡數據型（給表格）還是故事型（講案例）？調整呈現方式。</li>
+                        <li><strong>情緒觸發點</strong>：提到「子女教育」眼睛發亮？提到「父母醫療」皺眉？抓住情感錨點。</li>
+                    </ol>
+                    <p class="q">「觀察不是窺探，而是尊重客戶的表達方式。」</p>
+                    <p class="muted">練習：下次面談，記錄3個非語言訊號與你的應對。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">原则：一目标一账户，避免池子混用</span>
-                <div class="bar" style="width:40%"><i style="width:100%"></i></div>
+            <footer class="footer"><span class="axa-badge">信任 = 專業 × 同理心 × 尊重</span>
+                <div class="bar" style="width:42%"><i style="width:100%"></i></div>
             </footer>
         </section>
 
         <!-- 14 -->
-        <section class="slide" data-title="价格表达与促成">
+        <section class="slide" data-title="總結與行動">
             <header>
-                <h2>价格表达与当场促成</h2>
-            </header>
-            <main class="grid cols-3">
-                <div class="card">
-                    <h3>现金流表达</h3>
-                    <ul>
-                        <li>不说“总投入300万”，说：<em>“每月约2.5万，像交房租一样自然”</em></li>
-                        <li>三档不是“贵贱”，是<span style="color:var(--accent)">三种生活状态</span>：
-                            保底 —— 不慌；标准 —— 自在；进阶 —— 放心</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <h3>四步促成</h3>
-                    <ol>
-                        <li><strong>复盘价值：</strong>“还记得您最怕的那件事吗？现在，它已经被锁定了。”</li>
-                        <li><strong>呈现三档：</strong>“这三套安排，哪一套更像您未来十年想过的生活？”</li>
-                        <li><strong>确认预算：</strong>“如果让您选一个能安心启动的数字，是多少？”</li>
-                        <li><strong>约定交付：</strong>“我今天发您完整方案包，您看两天，周三上午我们再碰一次——不催您，只等您确认。”</li>
-                    </ol>
-                </div>
-
-                <div class="card">
-                    <h3>常见异议</h3>
-                    <ul>
-                        <li><strong>“再看看”</strong> →
-                            “完全理解。这种事，没人敢仓促决定。<br>我帮您把方案保留到本周五——<br><em>因为我知道，您不是不想做，是不想做错。</em>”</li>
-                        <li><strong>“预算紧”</strong> → “没关系，我们可以先从‘保底桶’启动。它不占太多现金流，却能守住您最在意的部分。<br>进阶部分，随时可追加，不急。”</li>
-                        <li><strong>“和家人商量”</strong> → “当然。不过，您希望他们看到的是：<br>一份清晰的计划，还是一个还在犹豫的人？”</li>
-                    </ul>
-                </div>
-            </main>
-
-            <!-- 👇 不是“备注”，是信念 -->
-            <div
-                style="margin: 1.8rem 0; padding: 1rem; background: rgba(34, 197, 94, 0.08); border: 1px solid #22c55e; border-radius: 10px; color: #d1fae5; font-size: clamp(14px, 3.5vw, 16px);">
-                <strong style="color:#22c55e; display:block; margin-bottom:0.4rem;">讲师备注 🎯</strong>
-                <p style="margin:0; line-height:1.7; text-align:center;">
-                    真正的促成，<br>
-                    不是说服客户买，<br>
-                    是让他<strong>自己得出结论：</strong><br>
-                    “我不买，才是<strong>风险最大</strong>的决定。”
-                </p>
-            </div>
-
-            <footer class="footer">
-                <span class="muted">工具：签前检查清单 —— 确认：信任已建、方案认同、预算清晰、时间窗锁定</span>
-                <div class="bar" style="width:40%"><i style="width:100%"></i></div>
-            </footer>
-        </section>
-
-        <!-- 15 -->
-        <section class="slide" data-title="KYC三大常見誤區">
-            <header>
-                <h2>KYC三大常見誤區與對策</h2>
-            </header>
-            <main class="grid cols-1">
-                <div class="card">
-                    <h3>误区1：只看“钱”，不看“人”</h3>
-                    <ul>
-                        <li><strong>案例：</strong>客户年收入高，但家庭关系复杂，直接推高保费产品 → 因信任未建立，客户婉拒。</li>
-                        <li><strong>对策：</strong>先聊家庭、价值观与情感需求，再谈财务。<br>
-                            <em>“钱是工具，人，才是目的。”</em>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="card" style="margin-top:1.5rem">
-                    <h3>误区2：工具表“填空式”完成，而非“挖掘式”分析</h3>
-                    <ul>
-                        <li><strong>案例：</strong>客户勾选“有留学打算”，却未深问：“为什么想送孩子出国？您希望他从中获得什么？” → 方案冰冷，缺乏动机。</li>
-                        <li><strong>对策：</strong>用开放性问题引导：<br>
-                            <span class="kbd">“您觉得孩子留学最大的收获是什么？”</span><br>
-                            <span class="kbd">“如果现在没钱，您会怎么安排他的未来？”</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="card" style="margin-top:1.5rem">
-                    <h3>误区3：KYC一次完成，忽略动态变化</h3>
-                    <ul>
-                        <li><strong>案例：</strong>子女从小学升入高中，教育金规划未更新 → 方案失效，客户失望。</li>
-                        <li><strong>对策：</strong>每半年主动回访，动态更新T-D清单与风险状态。<br>
-                            <em>“KYC不是一次性任务，而是持续的信任对话。”</em>
-                        </li>
-                    </ul>
-                </div>
-            </main>
-
-            <footer class="footer">
-                <span class="muted">核心理念：KYC不是填表格，是建立一段值得托付的关系。</span>
-                <div class="bar" style="width:40%"><i style="width:84%"></i></div>
-            </footer>
-        </section>
-
-        <!-- 16 -->
-        <section class="slide" data-title="合规与隐私">
-            <header>
-                <h2>合规与隐私要点</h2>
-            </header>
-            <main class="card">
-                <ul>
-                    <li>最小化收集：只问与方案相关信息</li>
-                    <li>记录留痕：时间、方式、要点与同意</li>
-                    <li>禁止承诺收益、禁止不当用途营销</li>
-                </ul>
-            </main>
-            <footer class="footer"><span class="muted">合规先行，长期主义</span></footer>
-        </section>
-
-        <!-- 17 -->
-        <section class="slide" data-title="面谈纪要模板与作业">
-            <header>
-                <h2>面谈纪要模板 + 课后作业</h2>
+                <h2>總結與行動計劃</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>纪要模板</h3>
+                    <h3>今日帶走</h3>
                     <ul>
-                        <li>画像摘要（家庭/现金流/风险）</li>
-                        <li>目标T-D表与预算三轨</li>
-                        <li>风险雷达与下一步清单</li>
+                        <li>三維分層 × 五維挖掘 × 三檔方案</li>
+                        <li>教育/傳承兩張KYC表單</li>
+                        <li>1頁KYC摘要模板（可打印）</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>作业</h3>
-                    <ul>
-                        <li>各完成1份教育/传承KYC表</li>
-                        <li>输出1页摘要 + 三档方案</li>
-                    </ul>
+                    <h3>下一步（48小時內）</h3>
+                    <ol>
+                        <li>列出10位潛在客戶，貼上分層標籤</li>
+                        <li>預約3場面談，用模板出方案</li>
+                        <li>向主管提交1頁摘要與跟進計劃</li>
+                    </ol>
+                    <a class="cta" href="javascript:void(0)" id="printNow">打印/導出PDF</a>
                 </div>
             </main>
+            <footer class="footer"><span class="axa-badge">We care about what matters</span>
+                <div class="bar" style="width:42%"><i style="width:100%"></i></div>
+            </footer>
         </section>
     </div>
 
-    <!-- Navigation -->
     <div class="nav">
-        <button class="btn" id="prevBtn">← 上一页</button>
-        <button class="btn primary" id="nextBtn">下一页 →</button>
-        <button class="btn" id="tocBtn">目录</button>
-        <button class="btn" id="printBtn">打印/导出PDF</button>
+        <button class="btn" id="prevBtn">← 上一頁</button>
+        <button class="btn primary" id="nextBtn">下一頁 →</button>
+        <button class="btn" id="tocBtn">目錄</button>
+        <button class="btn" id="printBtn">打印/導出PDF</button>
     </div>
-    <div class="hint">提示：← → 或空格切换；点击“目录”快速跳转</div>
+    <div class="hint">提示：← → 或空白鍵切換；點擊「目錄」快速跳轉；適配手機</div>
 
     <script>
         (function () {
             const slides = [...document.querySelectorAll('.slide')];
             const bar = () => document.querySelector('.slide.active .bar i');
             let idx = 0;
-            const show = (i) => {
+            const show = i => {
                 idx = (i + slides.length) % slides.length;
                 slides.forEach(s => s.classList.remove('active'));
                 slides[idx].classList.add('active');
                 const prog = ((idx + 1) / slides.length * 100).toFixed(1) + '%';
                 const b = bar(); if (b) b.style.width = prog;
-                document.title = slides[idx].dataset.title ? slides[idx].dataset.title + '｜KYC培训' : 'KYC培训';
+                document.title = (slides[idx].dataset.title ? slides[idx].dataset.title + '｜' : '') + 'KYC培訓｜AXA HK';
             };
             const next = () => show(idx + 1);
             const prev = () => show(idx - 1);
             document.getElementById('nextBtn').onclick = next;
             document.getElementById('prevBtn').onclick = prev;
-            document.getElementById('printBtn').onclick = () => window.print();
+            const printAll = () => window.print();
+            document.getElementById('printBtn').onclick = printAll;
+            const printNowBtn = document.getElementById('printNow');
+            if (printNowBtn) printNowBtn.onclick = printAll;
 
             // keyboard
             window.addEventListener('keydown', e => {
@@ -1036,7 +916,7 @@
                 if (e.key === 'End') show(slides.length - 1);
             });
 
-            // touch swipe
+            // touch
             let x0 = null;
             window.addEventListener('touchstart', e => { x0 = e.changedTouches[0].clientX; }, { passive: true });
             window.addEventListener('touchend', e => {
@@ -1046,19 +926,18 @@
                 x0 = null;
             });
 
-            // Table of Contents modal
+            // toc
             const tocBtn = document.getElementById('tocBtn');
             tocBtn.addEventListener('click', () => {
-                const items = slides.map((s, i) => `${i + 1}. ${s.dataset.title || '第' + (i + 1) + '页'}`).join('\n');
-                const pick = prompt('输入页码跳转：\n' + items + '\n\n当前：' + (idx + 1));
+                const items = slides.map((s, i) => `${i + 1}. ${s.dataset.title || ('第' + (i + 1) + '頁')}`).join('\n');
+                const pick = prompt('輸入頁碼跳轉：\n' + items + '\n\n當前：' + (idx + 1));
                 const n = parseInt(pick, 10);
                 if (!isNaN(n) && n >= 1 && n <= slides.length) show(n - 1);
             });
 
-            // Deep link ?p=#
+            // deep link ?p=#
             const qp = new URLSearchParams(location.search).get('p');
             if (qp) { const n = parseInt(qp, 10); if (!isNaN(n)) show(n - 1); }
-
         })();
     </script>
 </body>
