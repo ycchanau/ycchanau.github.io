@@ -128,11 +128,156 @@
             grid-template-columns: repeat(3, minmax(0, 1fr))
         }
 
-        @media (max-width:800px) {
+        .highlight-red {
+            border: 2px solid red;
+        }
 
-            .cols-2,
-            .cols-3 {
-                grid-template-columns: 1fr
+        /* print */
+        @media print {
+
+            /* honor print colors */
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            html,
+            body {
+                background: #fff !important;
+                color: #111 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+
+            .deck {
+                height: auto !important;
+            }
+
+            .slide {
+                display: block !important;
+
+                /* allow slide content to flow across pages */
+                height: auto !important;
+                width: auto !important;
+                max-width: 100% !important;
+                padding: 1in .8in !important;
+                margin: 0 !important;
+
+                /* keep separation between slides after content ends */
+                page-break-after: always !important;
+                page-break-inside: auto !important;
+                overflow: visible !important;
+
+                box-shadow: none !important;
+                background: #fff !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .slide:last-child {
+                page-break-after: avoid !important;
+            }
+
+            .nav,
+            .footer,
+            .hint,
+            .bar {
+                display: none !important;
+            }
+
+            h1,
+            h2,
+            h3,
+            p,
+            ul,
+            li,
+            th,
+            td {
+                color: #111 !important;
+                text-shadow: none !important;
+            }
+
+            .card {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                margin-bottom: .35in !important;
+
+                /* allow cards to break if tall */
+                page-break-inside: auto !important;
+                overflow: visible !important;
+            }
+
+            /* general containers: allow breaking */
+            .grid,
+            main,
+            header,
+            section,
+            div,
+            article,
+            aside {
+                page-break-inside: auto !important;
+                break-inside: auto !important;
+                overflow: visible !important;
+            }
+
+            /* tables: white background + black text + split across pages with repeating header */
+            table {
+                width: 100% !important;
+                font-size: 12pt !important;
+                background: #ffffff !important;
+                color: #111111 !important;
+
+                border-collapse: separate !important;
+                border-spacing: 0 8px !important;
+
+                page-break-inside: auto !important;
+            }
+
+            thead {
+                display: table-header-group !important;
+            }
+
+            tfoot {
+                display: table-footer-group !important;
+            }
+
+            tr {
+                background: #ffffff !important;
+                border: 1px solid #e5e7eb !important;
+
+                /* avoid breaking a single row across pages */
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+
+            th,
+            td {
+                background: #ffffff !important;
+                color: #111111 !important;
+                border-color: #e5e7eb !important;
+            }
+
+            th {
+                background: #f3f4f6 !important;
+                color: #111111 !important;
+                font-weight: 700 !important;
+            }
+
+            /* neutralize any dark gradients in inline styles */
+            [style*="linear-gradient"] {
+                background-image: none !important;
+            }
+
+            * {
+                orphans: 3;
+                widows: 3;
+            }
+
+            a {
+                color: #0066cc !important;
+                text-decoration: underline !important;
             }
         }
 
@@ -252,6 +397,7 @@
         /* print */
         @media print {
 
+            /* keep your originals */
             html,
             body {
                 background: #fff !important;
@@ -259,11 +405,11 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 height: auto !important;
-                overflow: visible !important
+                overflow: visible !important;
             }
 
             .deck {
-                height: auto !important
+                height: auto !important;
             }
 
             .slide {
@@ -276,18 +422,18 @@
                 break-inside: avoid !important;
                 box-shadow: none !important;
                 background: #fff !important;
-                border: 1px solid #ddd !important
+                border: 1px solid #ddd !important;
             }
 
             .slide:last-child {
-                page-break-after: avoid !important
+                page-break-after: avoid !important;
             }
 
             .nav,
             .footer,
             .hint,
             .bar {
-                display: none !important
+                display: none !important;
             }
 
             h1,
@@ -299,29 +445,60 @@
             th,
             td {
                 color: #111 !important;
-                text-shadow: none !important
+                text-shadow: none !important;
             }
 
             .card {
                 background: #fff !important;
                 border: 1px solid #ccc !important;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, .1) !important;
-                margin-bottom: .35in !important
+                margin-bottom: .35in !important;
             }
 
             table {
                 width: 100% !important;
-                font-size: 12pt !important
+                font-size: 12pt !important;
             }
 
             * {
                 orphans: 3;
-                widows: 3
+                widows: 3;
             }
 
             a {
                 color: #0066cc !important;
-                text-decoration: underline !important
+                text-decoration: underline !important;
+            }
+
+            /* NEW: ensure print colors honored */
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* NEW: force tables to white background + black text */
+            table,
+            tr,
+            th,
+            td {
+                background: #ffffff !important;
+                color: #111111 !important;
+                border-color: #e5e7eb !important;
+            }
+
+            tr {
+                border: 1px solid #e5e7eb !important;
+            }
+
+            th {
+                background: #f3f4f6 !important;
+                color: #111111 !important;
+                font-weight: 700 !important;
+            }
+
+            /* NEW: if any element uses dark gradients, remove them in print */
+            [style*="linear-gradient"] {
+                background-image: none !important;
             }
         }
 
@@ -351,24 +528,24 @@
 
 <body>
     <div class="deck" id="deck">
-        <!-- 1 -->
+        <!-- 標題 -->
         <section class="slide active" data-title="標題">
             <header>
-                <h1>KYC——AXA香港新人培訓（60分鐘）</h1>
+                <h1>KYC----AXA香港新人培訓（60分鐘）</h1>
             </header>
             <main class="grid cols-2">
                 <div class="card">
                     <h3>培訓目標</h3>
                     <ul>
-                        <li>建立AXA標準的客戶分層框架</li>
-                        <li>掌握「收入/支出/負債/資產/風險」五維挖掘</li>
-                        <li>輸出1頁KYC摘要＋3檔設計方案</li>
+                        <li>建立AXA標準的「生命週期 × 資產級別 × 風險」客戶分層框架</li>
+                        <li>掌握需求挖掘</li>
+                        <li>設計方案</li>
                     </ul>
                 </div>
                 <div class="card">
                     <h3>時間安排（60’）</h3>
                     <ul>
-                        <li>1. 客戶分層 15’</li>
+                        <li>1. 客戶分層與標準 15’</li>
                         <li>2. 需求分析 15’</li>
                         <li>3. 設計方案 15’</li>
                         <li>個案分享與練習 12’＋Q&A 3’</li>
@@ -382,7 +559,7 @@
             </footer>
         </section>
 
-        <!-- 2 -->
+        <!-- KYC定義 -->
         <section class="slide" data-title="KYC定義">
             <header>
                 <h2>KYC是什麼？為什麼決定成單質量</h2>
@@ -392,140 +569,595 @@
                     <h3>AXA視角</h3>
                     <ul>
                         <li>KYC = 合規信息收集＋需求澄清＋風險適配</li>
-                        <li>每次面談產出可追溯的紀要與同意</li>
-                        <li>方案價值 = 客戶目標 × 現金流可行 × 風險承受 × 時間軸匹配</li>
+                        <li>每次面談產出可追溯的紀要與同意（記錄-復述-確認）</li>
+                        <li>方案價值 = 客戶目標 × 現金流可行 × 風險承受</li>
                     </ul>
                 </div>
                 <div class="card">
                     <h3>常見失誤</h3>
                     <ul>
-                        <li>先講產品，後了解現金流/負債</li>
-                        <li>未確認用款時間與優先級</li>
+                        <li>先講產品，後了解現金流/負債/用款時間</li>
+                        <li>未確認優先級與時間表（里程碑/到期點）</li>
                         <li>無紀要，無法複盤與跟進</li>
                     </ul>
-                    <p class="muted">原則：記錄-復述-確認，話語用客戶的詞。</p>
+                    <p class="muted">原則：重述客戶原話，關鍵數字必記下。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">活動：最近一次失單，缺了哪塊信息？</span>
+            <footer class="footer">
+                <span class="muted">活動：最近一次失單，缺了哪塊信息？</span>
                 <div class="bar" style="width:42%"><i style="width:13%"></i></div>
             </footer>
         </section>
 
-        <!-- 3 -->
+        <!-- 客戶分層 -->
         <section class="slide" data-title="客戶分層">
             <header>
-                <h2>一、客戶分層（Segmentation）</h2>
+                <h2>分層標準（生命週期 × 資產級別）</h2>
             </header>
             <main class="grid cols-3">
                 <div class="card">
-                    <h3>家庭生命週期</h3>
+                    <h3>生命週期（7段）</h3>
                     <ul>
-                        <li>單身/新婚/育兒/子女教育/空巢/退休/傳承</li>
-                        <li>對應焦點：保障→儲蓄→教育→退休→傳承</li>
+                        <li>1 單身起步｜0–5年工齡</li>
+                        <li>2 新婚/備孕｜1–3年</li>
+                        <li>3 幼兒期｜0–6歲</li>
+                        <li>4 學齡期｜6–18歲</li>
+                        <li>5 夾心期｜供樓/養小/養老並行</li>
+                        <li>6 空巢/臨退｜50–60歲</li>
+                        <li>7 退休/傳承｜60+</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h3>財務能力維度</h3>
+                    <h3>資產級別（A–D）</h3>
                     <ul>
-                        <li>年家庭稅後收入：<span class="hl">≤60萬 / 60–150萬 / 150萬+</span></li>
-                        <li>可投現金流比率：可投/稅後 ≥ 10%｜15%｜25%</li>
-                        <li>負債率：本息/收入 ≤ 30%｜30–50%｜>50%</li>
+                        <li>A 基礎：可動用淨資產 &lt; HKD 1M；可投現金流率 &lt; 10%</li>
+                        <li>B 進階：HKD 1–5M；可投 10–20%</li>
+                        <li>C 資產：HKD 5–20M；可投 15–30%</li>
+                        <li>D 高淨值：&gt; HKD 20M；可投 &gt; 20%</li>
                     </ul>
+                    <p class="muted">可動用淨資產＝現金＋有價投資－短期負債</p>
                 </div>
                 <div class="card">
-                    <h3>風險暴露維度</h3>
+                    <h3>補充標籤</h3>
                     <ul>
-                        <li>身故/疾病對家庭現金流的影響</li>
-                        <li>事業/法人/按揭/稅務等法律風險</li>
-                        <li>流動性儲備：6–12個月支出是否獨立</li>
+                        <li>現金流波動：月收入標準差/均值 ≥ 0.5 → 高波動</li>
+                        <li>負債率：本息/稅後收入 &gt; 45% → 優先現金流防禦</li>
+                        <li>流動性：備用金 6–12個月（自僱取 12–18個月）</li>
                     </ul>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">輸出：給每位客戶貼上「生命週期 × 財務 × 風險」三維標籤</span>
+            <footer class="footer">
+                <span class="muted">定位規則：先週期→再資產級→加標籤（波動/負債/稅務/法人）</span>
                 <div class="bar" style="width:42%"><i style="width:21%"></i></div>
             </footer>
         </section>
 
-        <!-- 4 -->
+        <!-- 分層工具表 -->
         <section class="slide" data-title="分層工具表">
             <header>
-                <h2>分層速查卡（面談2分鐘完成）</h2>
+                <h2>分層速查卡（2分鐘完成＋30秒資產判定）</h2>
             </header>
             <main class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>維度</th>
-                            <th>問題</th>
-                            <th>標籤示例</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>收入</td>
-                            <td>主要收入來源與穩定性？年稅後？</td>
-                            <td>工薪/自僱/企業主；穩定/波動</td>
-                        </tr>
-                        <tr>
-                            <td>支出</td>
-                            <td>剛性支出（月供、學費、長輩）？</td>
-                            <td>剛性比 40%/60%/80%</td>
-                        </tr>
-                        <tr>
-                            <td>負債</td>
-                            <td>房貸/商貸/卡債利率與期限？</td>
-                            <td>低/中/高負債</td>
-                        </tr>
-                        <tr>
-                            <td>資產</td>
-                            <td>現金、投資、物業配置？</td>
-                            <td>現金占比 10/30/50%</td>
-                        </tr>
-                        <tr>
-                            <td>風險</td>
-                            <td>若身故或重疾，家庭收入缺口？</td>
-                            <td>缺口：小於1年/1–3年/3年以上</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p class="muted">目標：30秒判斷層級，避免一上來談產品。</p>
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>維度</th>
+                                <th>問題</th>
+                                <th>標籤/門檻</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>收入</td>
+                                <td>主要來源與穩定性？年薪稅後多少？自僱還是工薪？</td>
+                                <td>工薪/自僱/企業主；高/中/低波動（σ/μ ≥ 0.5 為高）</td>
+                            </tr>
+                            <tr>
+                                <td>支出</td>
+                                <td>剛性支出（供樓、學費、長輩）占比？</td>
+                                <td>剛性比 40%/60%/80%；＞60%需降風險優先</td>
+                            </tr>
+                            <tr>
+                                <td>負債</td>
+                                <td>房貸/商貸/卡債利率與期限？本息占收入？</td>
+                                <td>負債率 ≤30%/30–45%/&gt;45%（紅線）</td>
+                            </tr>
+                            <tr>
+                                <td>資產</td>
+                                <td>現金、有價投資、物業配置及流動性？</td>
+                                <td>可動用淨資產 A&lt;1M｜B 1–5M｜C 5–20M｜D &gt;20M</td>
+                            </tr>
+                            <tr>
+                                <td>風險</td>
+                                <td>若身故/重疾，家庭收入缺口多少年？</td>
+                                <td>缺口 &lt;1年/1–3年/&gt;3年 → 定壽/重疾缺口</td>
+                            </tr>
+                            <tr>
+                                <td>可投率</td>
+                                <td>每月可投金額？佔稅後收入百分比？</td>
+                                <td>A &lt;10%｜B 10–20%｜C 15–30%｜D &gt;20%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">輸入三個數字即可定位：可動用淨資產、可投率、負債率。</p>
             </main>
-            <footer class="footer"><span class="muted">工具：貼紙標籤或CRM字段即填即存</span>
+            <footer class="footer">
                 <div class="bar" style="width:42%"><i style="width:29%"></i></div>
             </footer>
         </section>
 
-        <!-- 5 -->
-        <section class="slide" data-title="需求分析">
+        <section class="slide" data-title="矩陣：階段1 單身起步">
             <header>
-                <h2>二、需求分析（五維挖掘）</h2>
+                <h2>生命週期 × 資產級別 矩陣（階段1：單身起步）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
             </header>
-            <main class="grid cols-2">
-                <div class="card">
-                    <h3>五維框架</h3>
-                    <ul>
-                        <li>收入｜支出｜負債｜資產｜風險事件</li>
-                        <li>量化到「金額M＋日期D＋成功概率P＋靈活度F」</li>
-                        <li class="q">「如果收入中斷3個月，家庭能撐多久？」</li>
-                    </ul>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>1 單身起步</th>
+                                <td class="highlight-red">
+                                    <div class="tag">1A</div>
+                                    <ul>
+                                        <li>特質：收入增長初期，租住多，現金薄</li>
+                                        <li>風險：收入中斷、醫療費自付</li>
+                                        <li>需求：意外/醫療基本盤、緊急備用金</li>
+                                        <li>產品：意外醫療、入門重疾、定期壽險小額、儲蓄短期（3–5年）</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">1B</div>
+                                    <ul>
+                                        <li>特質：年終/獎金波動，可投率10–20%</li>
+                                        <li>風險：職涯轉換斷檔</li>
+                                        <li>需求：提升醫療額度、加重疾層</li>
+                                        <li>產品：升級醫療、重疾（期繳）、定壽10–20年</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">1C</div>
+                                    <ul>
+                                        <li>特質：股票/基金佔比高，稅務簡單</li>
+                                        <li>風險：市場回撤影響流動性</li>
+                                        <li>需求：資產波動對沖、稅前規劃起步</li>
+                                        <li>產品：高端醫療、重疾加倍、目標到期儲蓄/年金試水</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">1D</div>
+                                    <ul>
+                                        <li>特質：高薪/期權，海外資產萌芽</li>
+                                        <li>風險：期權集中風險、稅務合規</li>
+                                        <li>需求：資產保全、全球醫療、稅務籃子</li>
+                                        <li>產品：高端國際醫療、重大疾病高保額、年金/終身儲蓄、傳承工具入門</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="card">
-                    <h3>提問技巧：背景-難點-暗示-需求</h3>
-                    <ol>
-                        <li>背景：了解現況與目標</li>
-                        <li>難點：找阻礙（現金流/期限/風險）</li>
-                        <li>暗示：提供可行路徑</li>
-                        <li>需求：讓客戶自己說出要什麼</li>
-                    </ol>
-                    <p>例：<span class="q">「孩子3年後赴英讀書（背景），匯率與學費波動（難點）。若有一筆鎖定3–5年保本增長的教育金（暗示），是否更安心？（需求）」</span></p>
-                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
             </main>
-            <footer class="footer"><span class="muted">原則：多問開放題，少下判斷；用客戶語言復述</span>
-                <div class="bar" style="width:42%"><i style="width:38%"></i></div>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
             </footer>
         </section>
 
-        <!-- 6 -->
+        <section class="slide" data-title="矩陣：階段2 新婚/備孕">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段2：新婚/備孕）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>2 新婚/備孕</th>
+                                <td class="highlight-red">
+                                    <div class="tag">2A</div>
+                                    <ul>
+                                        <li>特質：成家支出上升、租/首置壓力</li>
+                                        <li>風險：家庭收入單點故障</li>
+                                        <li>需求：家庭收入保護、孕產醫療</li>
+                                        <li>產品：定壽保額=年支出×5–10、醫療/婦產附加、入門教育金</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">2B</div>
+                                    <ul>
+                                        <li>特質：可投率10–20%，計劃置業</li>
+                                        <li>風險：利率上行、負債率上升</li>
+                                        <li>需求：供樓前現金流防守、重疾雙人覆蓋</li>
+                                        <li>產品：雙被保人重疾、定壽遞減搭配、儲蓄短中期（5–10年）</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">2C</div>
+                                    <ul>
+                                        <li>特質：已有資產池，考慮二孩/改善型</li>
+                                        <li>風險：資產與負債錯配</li>
+                                        <li>需求：保額提升、教育金計畫化</li>
+                                        <li>產品：高端醫療、重疾疊加、教育儲蓄階梯、年金鎖現金流</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">2D</div>
+                                    <ul>
+                                        <li>特質：資產多元，海外產子/教育意向</li>
+                                        <li>風險：跨境醫療與稅務</li>
+                                        <li>需求：全球醫療+教育金+家族賬本</li>
+                                        <li>產品：國際醫療頂配、增額終身、教育金規劃、信託/保單質押</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <section class="slide" data-title="矩陣：階段3 幼兒期">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段3：幼兒期 0–6歲）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>3 幼兒期（0–6歲）</th>
+                                <td class="highlight-red">
+                                    <div class="tag">3A</div>
+                                    <ul>
+                                        <li>特質：奶粉/照護支出剛性上升</li>
+                                        <li>風險：父母任一人失收影響剛性支出</li>
+                                        <li>需求：收入保護、兒童醫療/重疾、緊急備用金</li>
+                                        <li>產品：定壽×雙主體、兒童醫療、重疾分期、儲蓄5–8年</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">3B</div>
+                                    <ul>
+                                        <li>特質：房貸30–45%，可投10–20%</li>
+                                        <li>風險：供樓+教育雙壓</li>
+                                        <li>需求：保額提升、教育金啟動、現金流緩衝</li>
+                                        <li>產品：定壽遞減+重疾、教育儲蓄（目標學費）、醫療升級</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">3C</div>
+                                    <ul>
+                                        <li>特質：資產池穩定，考慮國際教育</li>
+                                        <li>風險：資產回撤與學費剛性衝突</li>
+                                        <li>需求：學費現金流鎖定、醫療全面</li>
+                                        <li>產品：高端醫療、年金/增額終身做學費池、重疾高保額</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">3D</div>
+                                    <ul>
+                                        <li>特質：多物業/多地資產</li>
+                                        <li>風險：匯率/跨境醫療/監護安排</li>
+                                        <li>需求：教育資金信託、監護人條款、全球保障</li>
+                                        <li>產品：國際醫療、保單信託/受益人設計、美元年金池</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <section class="slide" data-title="矩陣：階段4 學齡期">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段4：學齡期 6–18歲）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>4 學齡期（6–18歲）</th>
+                                <td class="highlight-red">
+                                    <div class="tag">4A</div>
+                                    <ul>
+                                        <li>特質：補習/學費剛性支出高</li>
+                                        <li>風險：父母健康事件影響學業</li>
+                                        <li>需求：學費保證、家庭醫療續保</li>
+                                        <li>產品：定壽缺口×10年、重疾升額、教育儲蓄定投</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">4B</div>
+                                    <ul>
+                                        <li>特質：事業上升期，時間緊</li>
+                                        <li>風險：過度投資高波動資產</li>
+                                        <li>需求：資金池分桶管理（短/中/長）</li>
+                                        <li>產品：醫療頂配、重疾增購、年金/增額終身作中長桶</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">4C</div>
+                                    <ul>
+                                        <li>特質：海外升學規劃</li>
+                                        <li>風險：匯率/海外醫療成本</li>
+                                        <li>需求：美元現金流、全球醫療</li>
+                                        <li>產品：美元年金、國際醫療、重疾高保額（雙幣）</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">4D</div>
+                                    <ul>
+                                        <li>特質：家族資產分佈多元</li>
+                                        <li>風險：資產隔離與繼承安排不足</li>
+                                        <li>需求：資產保全、教育/慈善賬本</li>
+                                        <li>產品：家族信託、保單貸款/質押、增額終身/傳承方案</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <section class="slide" data-title="矩陣：階段5 夾心期">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段5：夾心期）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>5 夾心期（供樓/養小/養老）</th>
+                                <td>
+                                    <div class="tag">5A</div>
+                                    <ul>
+                                        <li>特質：負債率偏高、本息壓力</li>
+                                        <li>風險：利率上行、失業風險</li>
+                                        <li>需求：收入保護、還款保障、醫療續保</li>
+                                        <li>產品：定壽遞減覆蓋貸款、重疾續購、醫療保證續保型</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">5B</div>
+                                    <ul>
+                                        <li>特質：可投10–20%，但現金流緊</li>
+                                        <li>風險：家庭單點收入集中</li>
+                                        <li>需求：雙主體保障、退休起步</li>
+                                        <li>產品：雙人重疾/意外、年金小額起步、教育金補位</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">5C</div>
+                                    <ul>
+                                        <li>特質：資產可調度，產業/股權暴露</li>
+                                        <li>風險：事業風險傳導至家庭</li>
+                                        <li>需求：資產隔離、退休現金流</li>
+                                        <li>產品：保單資產隔離、增額終身/年金、醫療頂配、關鍵人壽險</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">5D</div>
+                                    <ul>
+                                        <li>特質：企業主/多資產，跨境安排</li>
+                                        <li>風險：稅務/法律/傳承爭議</li>
+                                        <li>需求：持有架構優化、家族治理</li>
+                                        <li>產品：保單信託、保單質押融資、全球醫療、傳承條款設計</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <section class="slide" data-title="矩陣：階段6 空巢/臨退">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段6：空巢/臨退 50–60）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>6 空巢/臨退（50–60）</th>
+                                <td>
+                                    <div class="tag">6A</div>
+                                    <ul>
+                                        <li>特質：收入高峰尾段，醫療支出上升</li>
+                                        <li>風險：重疾/長護風險增加</li>
+                                        <li>需求：退休底線、醫療續保</li>
+                                        <li>產品：年金底層、小額增額終身、醫療續保型</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">6B</div>
+                                    <ul>
+                                        <li>特質：資產有但流動性有限</li>
+                                        <li>風險：市場下行撞上退休</li>
+                                        <li>需求：預退休現金流鎖定、長護預備</li>
+                                        <li>產品：年金分期上鎖、增額終身、長期護理/重大疾病</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">6C</div>
+                                    <ul>
+                                        <li>特質：房產/投資並存</li>
+                                        <li>風險：遺產分配不清、醫療成本通脹</li>
+                                        <li>需求：現金流穩態、受益人安排</li>
+                                        <li>產品：年金階梯、受益人優化、高端醫療、傳承保險</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">6D</div>
+                                    <ul>
+                                        <li>特質：國際資產配置</li>
+                                        <li>風險：跨境稅/監管變動</li>
+                                        <li>需求：資產保全與退守、慈善/傳承</li>
+                                        <li>產品：保單信託、美元年金池、全球醫療、慈善保單架構</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <section class="slide" data-title="矩陣：階段7 退休/傳承">
+            <header>
+                <h2>生命週期 × 資產級別 矩陣（階段7：退休/傳承 60+）</h2>
+                <p class="muted">每格包含：特質｜首要風險｜核心需求｜優先產品族</p>
+            </header>
+            <main class="card">
+                <div class="scroll-x">
+                    <table class="minw">
+                        <thead>
+                            <tr>
+                                <th>生命週期 ⧸ 資產級</th>
+                                <th>A 基礎（1M｜&lt;10%）</th>
+                                <th>B 進階（1–5M｜10–20%）</th>
+                                <th>C 資產（5–20M｜15–30%）</th>
+                                <th>D 高淨值（&gt;20M｜&gt;20%）</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>7 退休/傳承（60+）</th>
+                                <td>
+                                    <div class="tag">7A</div>
+                                    <ul>
+                                        <li>特質：依靠社保/積蓄，醫療剛需</li>
+                                        <li>風險：長護開支掏空積蓄</li>
+                                        <li>需求：醫療與長護保障、現金流底線</li>
+                                        <li>產品：醫療續保型、長期護理、年金保底</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">7B</div>
+                                    <ul>
+                                        <li>特質：有一定資產，子女支援普通</li>
+                                        <li>風險：通脹侵蝕、醫療通脹</li>
+                                        <li>需求：抗通脹現金流、醫療護理</li>
+                                        <li>產品：增額終身（現金值）、年金通脹選擇、高端醫療（銀髮版）</li>
+                                    </ul>
+                                </td>
+                                <td class="highlight-red">
+                                    <div class="tag">7C</div>
+                                    <ul>
+                                        <li>特質：有出租/投資現金流</li>
+                                        <li>風險：遺產分割與稅務</li>
+                                        <li>需求：傳承稅務效率、長護備付</li>
+                                        <li>產品：傳承保險、保單信託、年金穩配、長護附加</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <div class="tag">7D</div>
+                                    <ul>
+                                        <li>特質：家族資產、慈善/家族會議</li>
+                                        <li>風險：家族治理與跨境合規</li>
+                                        <li>需求：家族憲章、分配機制、遺囑/信託</li>
+                                        <li>產品：保單信託/家族信託、傳承架構、保單質押/流動性管理</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="muted">使用方法：鎖定「行（週期）」＋「列（資產級）」→ 直接提取該格的3項優先任務。</p>
+            </main>
+            <footer class="footer">
+                <div class="bar" style="width:42%"><i style="width:37%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 教育與傳承工具表(公司) -->
         <section class="slide" data-title="教育與傳承工具表">
             <header>
                 <h2>KYC工具表：子女教育｜財富傳承</h2>
@@ -552,299 +1184,378 @@
                     <p class="muted">輸出：傳承目標表與受益人設計草案。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">行動：面談時用兩張表單引導，面後錄入CRM</span>
+            <footer class="footer">
                 <div class="bar" style="width:42%"><i style="width:46%"></i></div>
             </footer>
         </section>
 
-        <!-- 7 -->
-        <section class="slide" data-title="設計方案方法">
+        <!-- 新增互動練習 1：互相分類 -->
+        <section class="slide" data-title="互動練習1：你是哪一格？">
             <header>
-                <h2>三、設計方案（3檔配置）</h2>
-            </header>
-            <main class="grid cols-3">
-                <div class="card">
-                    <h3>保底（風險優先）</h3>
-                    <ul>
-                        <li>應急金：6–12個月支出</li>
-                        <li>保障：醫療/重疾/人壽補足缺口</li>
-                        <li>教育金/退休金的最低確定額</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>標準（目標對齊）</h3>
-                    <ul>
-                        <li>按目標M、期限D設立專戶</li>
-                        <li>以年繳現金流為主，保單貸款作彈性</li>
-                        <li>海外/本地佈局與匯率對沖</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>進階（增益與傳承）</h3>
-                    <ul>
-                        <li>高現金價值儲蓄險＋定投組合</li>
-                        <li>保險金信託/家族信託銜接</li>
-                        <li>稅務與資產保全設計</li>
-                    </ul>
-                </div>
-            </main>
-            <footer class="footer"><span class="muted">呈現：1頁「目標-預算-風險」摘要＋三檔表格</span>
-                <div class="bar" style="width:42%"><i style="width:54%"></i></div>
-            </footer>
-        </section>
-
-        <!-- 8 -->
-        <section class="slide" data-title="個案分享">
-            <header>
-                <h2>個案分享：以教育金切入儲蓄險</h2>
+                <h2>🪄 互動練習1：幫你的鄰座「分層定位」</h2>
+                <p class="muted">目標：用2分鐘問3個問題，把對方放進矩陣格子裡</p>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>背景</h3>
-                    <ul>
-                        <li>客戶：35歲夫妻，1名4歲子女；年稅後家庭收入120萬港幣</li>
-                        <li>計劃：6年後赴英中學；預估學費＋生活費合計每年40萬，6年共240萬</li>
-                        <li>現況：定存80萬，基金帳戶30萬，無教育專戶；房貸本息月比35%</li>
-                    </ul>
-                    <h3>難點</h3>
-                    <ul>
-                        <li>匯率與投資波動，擔心資金不足</li>
-                        <li>若重疾/身故，教育計劃可能中斷</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>暗示 → 需求</h3>
-                    <p class="q">「若把一部分現金流放入高現金價值的儲蓄壽險，鎖定3–5年繳費，現金價值與身故保障雙備用，您會不會更安心？」</p>
-                    <h3>方案（摘要）</h3>
-                    <ul>
-                        <li>保底：醫療/重疾補足；應急金9個月</li>
-                        <li>標準：每年繳20萬×5年儲蓄險，6–8年後分階段提取作教育金</li>
-                        <li>進階：增加人壽覆蓋至家庭年支出×10；設立保險金信託指定受益人與提取節點</li>
-                    </ul>
-                    <p class="muted">結果：客戶選擇標準＋部分進階；教育金與保障同時落地。</p>
-                </div>
-            </main>
-            <footer class="footer"><span class="muted">重點：用「教育專戶」命名帳戶，讓錢有任務</span>
-                <div class="bar" style="width:42%"><i style="width:62%"></i></div>
-            </footer>
-        </section>
-
-        <!-- 9 -->
-        <section class="slide" data-title="練習導引">
-            <header>
-                <h2>小組練習：分層 × 挖掘 × 方案</h2>
-            </header>
-            <main class="grid cols-2">
-                <div class="card">
-                    <h3>步驟（每組3人，12分鐘）</h3>
+                    <h3>步驟（4分鐘）</h3>
                     <ol>
-                        <li>角色扮演：顧問/客戶/觀察者</li>
-                        <li>用分層速查卡完成標籤（2’）</li>
-                        <li>按五維挖掘提問（6’）</li>
-                        <li>輸出1頁摘要與3檔方案（4’）</li>
+                        <li>兩人一組，A先問B，B再問A。</li>
+                        <li>每人問對方<strong>3個問題</strong>（見右欄）。</li>
+                        <li>根據答案，把對方定位到「生命週期 × 資產級別」矩陣（如 2B、3A）。</li>
+                        <li>互相核對：「你把我分到__，我覺得合理嗎？」</li>
                     </ol>
+                    <p class="muted">提示：不用精準，重點是「敢問、敢判、敢說」。</p>
                 </div>
                 <div class="card">
-                    <h3>提問清單（必問）</h3>
+                    <h3>3個必問題（任選3問）</h3>
                     <ul>
-                        <li>收入來源與穩定性？今年可投現金流？</li>
-                        <li>每月剛性支出與房貸比？</li>
-                        <li>負債總額、利率與期限？</li>
-                        <li>資產分佈：現金/基金/物業/股權？</li>
-                        <li>身故/重疾對家庭經濟的影響金額？</li>
-                        <li>教育/退休/置業目標的金額M與日期D？</li>
+                        <li>你現在處於哪個人生階段？<br>（例：單身／新婚／有幼兒／供樓中）</li>
+                        <li>你每月可自由支配的錢，大概能存多少？<br>（例：＜3K → A級｜3–8K → B級）</li>
+                        <li>你有沒有房貸或大額負債？<br>（本息＞收入45% → 加「高負債」標籤）</li>
+                        <li>你覺得自己收入穩定嗎？<br>（波動大 → 加「高波動」標籤）</li>
                     </ul>
+                    <p class="hl">舉例：<br>「你28歲、月存5K、無房貸 → 1B」<br>「你32歲、有幼兒、月存4K、房貸佔40% → 3B + 高負債」</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">交付：把摘要拍照上傳群組，互評要點與風險適配</span>
-                <div class="bar" style="width:42%"><i style="width:71%"></i></div>
+            <footer class="footer">
+                <span class="muted">教學提示：分錯沒關係，重點是熟悉「提問→分類→標籤」流程</span>
+                <div class="bar" style="width:42%"><i style="width:24%"></i></div>
             </footer>
         </section>
 
-        <!-- 10 -->
-        <section class="slide" data-title="KYC表單mini版">
+        <!-- 需求分析｜場景卡 1–2 -->
+        <section class="slide" data-title="需求分析｜場景卡 1–2">
             <header>
-                <h2>現場填寫：KYC摘要</h2>
-            </header>
-            <main class="card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>項目</th>
-                            <th>內容</th>
-                            <th>指標/備註</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>家庭概況</td>
-                            <td>婚姻｜受養人｜決策人</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>收入/支出</td>
-                            <td>年稅後____；剛性支出____；可投____</td>
-                            <td>可投比≥15%為佳</td>
-                        </tr>
-                        <tr>
-                            <td>負債</td>
-                            <td>總額____；月本息/收入____%</td>
-                            <td>建議≤40%</td>
-                        </tr>
-                        <tr>
-                            <td>資產</td>
-                            <td>現金____；投資____；物業____</td>
-                            <td>現金占比10–30%</td>
-                        </tr>
-                        <tr>
-                            <td>風險缺口</td>
-                            <td>身故缺口____；重疾缺口____</td>
-                            <td>=責任年支出×年數</td>
-                        </tr>
-                        <tr>
-                            <td>目標</td>
-                            <td>目標M____；日期D____；優先級____</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>風險承受</td>
-                            <td>保守/均衡/進取；流動性月數____</td>
-                            <td>≥6–12個月</td>
-                        </tr>
-                        <tr>
-                            <td>方案</td>
-                            <td>保底/標準/進階（金額與產品）</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>同意與下一步</td>
-                            <td>資料使用範圍｜下次會面日期</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </main>
-            <footer class="footer"><span class="muted">合規：明確資料用途與保存，尊重客戶選擇</span>
-                <div class="bar" style="width:42%"><i style="width:79%"></i></div>
-            </footer>
-        </section>
-
-        <!-- 11 -->
-        <section class="slide" data-title="話術庫">
-            <header>
-                <h2>高效面談話術</h2>
+                <h2>需求分析｜場景卡（1–2）</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>開場</h3>
-                    <p>「今天用30–40分鐘了解您家庭與目標；不是推產品，而是整理一份專屬摘要。任何問題您可跳過。」</p>
-                    <h3>復述</h3>
-                    <p>「讓我確認一下：您希望在<span class="hl">D</span>前準備<span class="hl">M</span>教育金，同時控制風險在可承受範圍，對嗎？」</p>
-                </div>
-                <div class="card">
-                    <h3>處理疑慮</h3>
+                    <h3>場景1｜單身上班族（剛工作2–3年）</h3>
                     <ul>
-                        <li>價格：「我們先看現金流能承擔多少，再決定檔位。」</li>
-                        <li>流動性：「教育金會分期提取，保留應急池不動。」</li>
-                        <li>風險：「若突發重疾/身故，方案仍能自動兌現。」</li>
+                        <li><strong>目標常見</strong>：先有基本醫療和小額存錢，別影響生活</li>
                     </ul>
-                    <p class="muted">關鍵：停頓2秒，讓客戶做決定。</p>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>你到手工資大概多少？最淡的一個月大概多少？</li>
+                        <li>每月固定花費（房租/交通/吃飯）大概多少？</li>
+                        <li>現在手上有多少現金是隨時能用的？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：能存的錢 ≈ 工資 − 固定花費（看是否≥3000–5000）</p>
+                    <p><strong>結論</strong>：先把醫療做起來，再留3–6個月生活費，剩下每月少量做短期儲蓄。</p>
+                    <p class="talk"><strong>話術</strong>：先把看病和急用錢安排好，再慢慢加儲蓄，壓力不會大。</p>
+                </div>
+
+                <div class="card">
+                    <h3>場景2｜新婚或準備要小孩</h3>
+                    <ul>
+                        <li><strong>目標常見</strong>：擔心收入有變化，怕懷孕生產費用高</li>
+                    </ul>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>家裡主要是誰賺錢？如果有變化，生活會受多大影響？</li>
+                        <li>每月房租/房貸和父母支持大概多少？</li>
+                        <li>產檢、分娩、坐月子希望用什麼標準？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：家庭「不可少的錢」 = 房租/房貸 + 基本生活 + 父母支持</p>
+                    <p><strong>結論</strong>：先給賺錢的那位安排身故和重病保障，產前把醫療升級，儲蓄先小額開始。</p>
+                    <p class="talk"><strong>話術</strong>：先保住家庭「不可少的錢」，孩子來了也不慌。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">工具：把關鍵句存在手機備忘錄，面談即讀</span>
-                <div class="bar" style="width:42%"><i style="width:88%"></i></div>
+            <footer class="footer">
+                <span class="muted">新人提示：每頁兩張卡，問3句、算1步、收1句。</span>
+                <div class="bar"><i style="width:33%"></i></div>
             </footer>
         </section>
 
-        <!-- 12 -->
-        <section class="slide" data-title="敏感話題話術">
+        <!-- 需求分析｜場景卡 3–4 -->
+        <section class="slide" data-title="需求分析｜場景卡 3–4">
             <header>
-                <h2>如何優雅提問敏感話題？</h2>
+                <h2>需求分析｜場景卡（3–4）</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>原則：軟化 + 合理化 + 價值化</h3>
+                    <h3>場景3｜有幼兒（0–6歲）</h3>
                     <ul>
-                        <li><strong>軟化</strong>：用「很多客戶…」、「我們通常建議…」降低壓迫感</li>
-                        <li><strong>合理化</strong>：說明「這是為了確保方案安全／合規／有效」</li>
-                        <li><strong>價值化</strong>：強調「了解越完整，越能保護您和家人」</li>
+                        <li><strong>目標常見</strong>：托育/學前花費上升，開始想教育金</li>
                     </ul>
-                    <p class="q">例：<br>「很多家長在規劃教育金時，會擔心突發狀況影響計劃，所以我們通常會確認一下家庭收入結構，這樣萬一有變化，方案還能自動兜底。」</p>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>每月必要花費裡，孩子相關大概佔多少？</li>
+                        <li>如果你或配偶停工3個月，哪筆開支最擔心斷掉？</li>
+                        <li>教育金準備打算幾年後用？一次用還是每年用？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：教育金起步額 = 計劃每年學費 × 2（先做一半，壓力較小）</p>
+                    <p><strong>結論</strong>：先做雙人的身故/重病保障，教育金先分期小額開始，等收入穩定再加碼。</p>
+                    <p class="talk"><strong>話術</strong>：先把最怕斷掉的開支兜住，教育金我們慢慢攢，別一下子太重。</p>
                 </div>
+
                 <div class="card">
-                    <h3>高敏感問題話術模板</h3>
+                    <h3>場景4｜學齡期（6–18歲），考慮海外</h3>
                     <ul>
-                        <li><strong>收入波動</strong>：<br>「您覺得未來3年收入穩定性如何？我們好預留緩衝空間。」</li>
-                        <li><strong>負債壓力</strong>：<br>「房貸／卡債目前佔收入比例大概多少？我們看看是否需要優先處理。」</li>
-                        <li><strong>婚姻／繼承</strong>：<br>「如果未來資產要傳給孩子或配偶，您希望怎麼安排才安心？」</li>
-                        <li><strong>健康告知</strong>：<br>「為了確保保障能順利生效，我們需要確認一下健康狀況，這部分完全保密。」</li>
+                        <li><strong>目標常見</strong>：3–5年內要一筆學費，怕匯率和投資波動</li>
                     </ul>
-                    <p class="muted">技巧：說完後停頓3秒，給客戶空間；若客戶猶豫，可說「這部分可以之後補，我們先看大方向。」</p>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>目標學校在哪個國家？首筆學費和生活費大概多少？</li>
+                        <li>家裡每月能穩定拿出多少錢做教育金？</li>
+                        <li>如果投資遇到下跌，你希望學費資金還能不能動？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：首筆準備金 = 1年學費＋1年生活費（盡量用美元/目標幣種）</p>
+                    <p><strong>結論</strong>：把教育金單獨放一桶，用相對穩的方式鎖定時間和幣種，醫療保障同時升級。</p>
+                    <p class="talk"><strong>話術</strong>：學費是「必須要用的錢」，先把第一年鎖住，後面每年再接力。</p>
                 </div>
             </main>
-            <footer class="footer"><span class="muted">關鍵：客戶不是拒絕問題，而是拒絕「被審問」</span>
-                <div class="bar" style="width:42%"><i style="width:92%"></i></div>
+            <footer class="footer">
+                <span class="muted">教學提醒：先鎖「必需用的錢」，再談收益與彈性。</span>
+                <div class="bar"><i style="width:66%"></i></div>
             </footer>
         </section>
 
-        <!-- 13 -->
-        <section class="slide" data-title="觀察與應對">
+        <!-- 需求分析｜場景卡 5–6 -->
+        <section class="slide" data-title="需求分析｜場景卡 5–6">
             <header>
-                <h2>觀察客戶反應，靈活調整策略</h2>
+                <h2>需求分析｜場景卡（5–6）</h2>
             </header>
             <main class="grid cols-2">
                 <div class="card">
-                    <h3>常見非語言訊號與應對</h3>
+                    <h3>場景5｜「夾心期」（供房、養小、顧父母）</h3>
+                    <ul>
+                        <li><strong>目標常見</strong>：房貸壓力大，怕失業或患重病</li>
+                    </ul>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>每月房貸本息多少？如果沒收入幾個月，房子會不會出問題？</li>
+                        <li>家裡誰是主要收入來源？另一個人能不能頂一部分？</li>
+                        <li>現在的醫療和重病保障各有多少？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：房貸安全邊際 = 手上現金 ÷ 房貸月供（至少要撐6個月為佳）</p>
+                    <p><strong>結論</strong>：優先用「隨貸款逐年減少」的保障把房貸兜住，再補醫療/重病，儲蓄小額起步。</p>
+                    <p class="talk"><strong>話術</strong>：先保證「房子不出事」，其他再逐步加，不要拖家裡後腿。</p>
+                </div>
+
+                <div class="card">
+                    <h3>場景6｜臨近退休（50–60歲）</h3>
+                    <ul>
+                        <li><strong>目標常見</strong>：鎖定退休現金流，擔心醫療費用</li>
+                    </ul>
+                    <h4>必問3句</h4>
+                    <ol>
+                        <li>每月基本生活費多少？退休後希望保留到什麼水平？</li>
+                        <li>現有投資裡，有沒有一部分希望變成「每月固定領」？</li>
+                        <li>有沒有擔心需要長期照護的情況（比如父母那代）？</li>
+                    </ol>
+                    <p class="calc"><strong>口算1步</strong>：退休「底線」 = 基本生活費 × 12 × 10年（先保證前10年）</p>
+                    <p><strong>結論</strong>：把部分資金換成按月/按年領取的方式，醫療和大病續保要關注續保穩定。</p>
+                    <p class="talk"><strong>話術</strong>：先鎖住每月能領的錢，退休心裡更有底。</p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">收尾話術：您的處境是「場景X」。我做3個預算檔供選。週四或週五，哪天15分鐘方便過一眼？</span>
+                <div class="bar"><i style="width:100%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 需求分析準備動作 -->
+        <section class="slide" data-title="需求分析準備動作">
+            <header>
+                <h2>需求分析前：3個動作讓客戶願意說</h2>
+                <p class="muted">先建立安全感，客戶才會給你真實數字</p>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>✅ 動作1：開場「減壓聲明」</h3>
+                    <p>「今天不是推產品，是幫您<strong>整理家庭財務健康檢查表</strong>，任何問題您都可以跳過或之後補。」</p>
+                    <p class="q">為什麼有效？<br>→ 客戶怕被推銷，你先解除武裝，他才敢說真話。</p>
+                    <h3>✅ 動作2：先聊「非數字目標」</h3>
+                    <p>「如果未來5年，您最想為家人完成的一件事是什麼？」<br>（例：孩子留學、父母醫療無憂、提早退休）</p>
+                    <p class="muted">→ 從情感目標切入，比直接問收入更容易打開話匣子。</p>
+                </div>
+                <div class="card">
+                    <h3>✅ 動作3：用「假設情境」問數字</h3>
+                    <ul>
+                        <li>不問：「你月入多少？」→ 太直接</li>
+                        <li>改問：<span class="q">「如果未來12個月收入減少20%，哪些開支是您絕對不想砍的？」</span></li>
+                        <li>或問：<span class="q">「萬一突發住院，您希望自付額控制在多少內？」</span></li>
+                    </ul>
+                    <p class="muted">→ 用「情境」包裝「數字」，客戶不覺得被審查，反而覺得你在幫他模擬風險。</p>
+                    <p class="hl">記住：客戶不抗拒「規劃」，抗拒「被審問」。</p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">行動：面談前深呼吸，默念「我是顧問，不是銷售」</span>
+                <div class="bar" style="width:42%"><i style="width:28%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 需求分析：客戶常見抗拒與破解 -->
+        <section class="slide" data-title="需求分析：客戶常見抗拒與破解">
+            <header>
+                <h2>需求分析實戰：客戶卡點 × 精準應對</h2>
+                <p class="muted">目標：不被問題卡住，把抗拒轉為需求確認</p>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>客戶常見5大卡點</h3>
+                    <ul>
+                        <li><strong>「我沒時間細談」</strong> → 時間壓力</li>
+                        <li><strong>「收入不穩定，不敢規劃」</strong> → 波動恐懼</li>
+                        <li><strong>「已有保險，不用再買」</strong> → 認知盲區</li>
+                        <li><strong>「錢要留着供樓/養老」</strong> → 優先級錯配</li>
+                        <li><strong>「等我穩定一點再說」</strong> → 拖延心理</li>
+                    </ul>
+                    <p class="q">核心原則：<br>不反駁、不教育、不催促 —— <strong>把問題轉成「共同解決方案」</strong></p>
+                </div>
+                <div class="card">
+                    <h3>一對一破解話術</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>訊號</th>
-                                <th>可能含義</th>
-                                <th>應對策略</th>
+                                <th>客戶說</th>
+                                <th>你回應</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>眼神迴避</td>
-                                <td>不適／隱瞞／思考</td>
-                                <td>切換輕鬆話題，或說「這部分不急，我們稍後再聊」</td>
+                                <td>「我沒時間」</td>
+                                <td>「我們只聚焦<strong>1個最想保障的目標</strong>，10分鐘搞定，其他下次補。」</td>
                             </tr>
                             <tr>
-                                <td>身體後傾</td>
-                                <td>防禦／抗拒</td>
-                                <td>降低語速，軟化語氣，強調「您主導節奏」</td>
+                                <td>「收入不穩」</td>
+                                <td>「正因不穩，才要設計<strong>彈性方案</strong>——收入高時多存，低時可暫停，不影響保障。」</td>
                             </tr>
                             <tr>
-                                <td>頻繁看手機／手錶</td>
-                                <td>時間壓力／分心</td>
-                                <td>主動提議：「我們先聚焦最重要的2個目標，15分鐘搞定？」</td>
+                                <td>「已有保險」</td>
+                                <td>「太好了！我們快速核對三件事：<br>1. 保額是否覆蓋缺口？<br>2. 是否涵蓋最新家庭責任？<br>3. 現金流是否仍可負擔？」</td>
                             </tr>
                             <tr>
-                                <td>突然沉默／嘆氣</td>
-                                <td>壓力／回憶痛苦經歷</td>
-                                <td>共情：「這部分確實不容易談，您慢慢說，我在聽。」</td>
+                                <td>「錢要留着供樓」</td>
+                                <td>「理解！我們優先設計『<strong>供樓保障型</strong>』方案——萬一出事，保險金自動幫還房貸，不動您現金。」</td>
                             </tr>
                             <tr>
-                                <td>主動傾身／點頭</td>
-                                <td>認同／感興趣</td>
-                                <td>趁勢深入：「您剛提到的XX，我們可以具體規劃一下。」</td>
+                                <td>「等穩定再說」</td>
+                                <td>「完全尊重！但保障有『<strong>健康門檻</strong>』和『<strong>年齡溢價</strong>』，現在鎖定基礎，未來升級更省力。」</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">行動：把5句回應存入手機備忘錄，面談遇阻立即調用</span>
+                <div class="bar" style="width:42%"><i style="width:38%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 新增互動練習 2：需求提問實戰 -->
+        <section class="slide" data-title="互動練習2：需求提問實戰">
+            <header>
+                <h2>🪄 互動練習2：用「假設情境」問出真實數字</h2>
+                <p class="muted">目標：不問「你月入多少」，而是問「如果…你會怎麼辦？」</p>
+            </header>
+            <main class="grid cols-2">
                 <div class="card">
-                    <h3>建立信任的3個觀察點</h3>
+                    <h3>步驟（5分鐘）</h3>
                     <ol>
-                        <li><strong>稱呼偏好</strong>：客戶喜歡被叫「陳生」還是「Chris」？模仿其用語風格。</li>
-                        <li><strong>決策節奏</strong>：喜歡數據型（給表格）還是故事型（講案例）？調整呈現方式。</li>
-                        <li><strong>情緒觸發點</strong>：提到「子女教育」眼睛發亮？提到「父母醫療」皺眉？抓住情感錨點。</li>
+                        <li>兩人一組，A扮演客戶，B扮演顧問。</li>
+                        <li>B從下方選<strong>1個假設情境</strong>問A（不要直接問數字！）</li>
+                        <li>A誠實回答（可虛構），B必須<strong>記錄兩個數字</strong>：<br>→ 金額 M｜→ 時間點 D</li>
+                        <li>交換角色，再練一次。</li>
                     </ol>
-                    <p class="q">「觀察不是窺探，而是尊重客戶的表達方式。」</p>
-                    <p class="muted">練習：下次面談，記錄3個非語言訊號與你的應對。</p>
+                    <p class="muted">舉例：<br>問：「如果未來12個月收入減少20%，你最不想砍掉哪筆開支？」<br>答：「孩子的學費，每月HKD 3000。」<br>→ 記錄：M=3000,
+                        D=每月</p>
+                </div>
+                <div class="card">
+                    <h3>6個安全假設情境（任選）</h3>
+                    <ul>
+                        <li>如果突發住院，你希望自付醫療費不超過多少？</li>
+                        <li>如果收入中斷3個月，你存款能撐多久？</li>
+                        <li>如果孩子3年後要留學，你希望那時手上有多少準備金？</li>
+                        <li>如果房貸利率上升1%，你每月多付多少仍可接受？</li>
+                        <li>如果要為父母準備醫療備用金，你希望金額是多少？</li>
+                        <li>如果只能保障一個家庭成員，你會先保誰？預算多少？</li>
+                    </ul>
+                    <p class="hl">關鍵：問完後，一定要<strong>復述數字</strong>：<br>「我幫你記下：學費每月HKD 3000，對嗎？」</p>
                 </div>
             </main>
-            <footer class="footer"><span class="axa-badge">信任 = 專業 × 同理心 × 尊重</span>
-                <div class="bar" style="width:42%"><i style="width:100%"></i></div>
+            <footer class="footer">
+                <span class="muted">行動：把「假設情境」抄在筆記本第一頁，面談前溫習</span>
+                <div class="bar" style="width:42%"><i style="width:40%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 設計方案：新人三步出方案 -->
+        <section class="slide" data-title="設計方案：新人三步出方案">
+            <header>
+                <h2>三、設計方案｜新人三步法（填空就能用）</h2>
+                <p class="muted">不用懂投資組合，記住：先保底 → 再對齊目標 → 最後談增值</p>
+            </header>
+            <main class="grid cols-3">
+                <div class="card">
+                    <h3>📌 第一步：保底檔（必做）</h3>
+                    <p><strong>口訣</strong>：<br>「急用錢＋看病錢＋斷收錢」</p>
+                    <ul>
+                        <li>急用錢 = 6個月生活費（放活期/貨基）</li>
+                        <li>看病錢 = 醫療險 + 重疾險（保額 ≥ 1年收入）</li>
+                        <li>斷收錢 = 定期壽險（保額 = 負債 + 5年家庭支出）</li>
+                    </ul>
+                    <p><strong>推薦產品</strong>：<strong>愛唯守危疾保障、智尊守慧醫療、真智惠保</strong></p>
+                </div>
+                <div class="card">
+                    <h3>📌 第二步：目標檔（主推）</h3>
+                    <p><strong>口訣</strong>：<br>「鎖時間 + 鎖金額 + 鎖幣種」</p>
+                    <ul>
+                        <li>鎖時間：幾年後要用？→ 選繳費期/提取期匹配</li>
+                        <li>鎖金額：目標多少？→ 每月/每年存多少能達標？</li>
+                        <li>鎖幣種：港元/美元？→ 選對應幣種保單</li>
+                    </ul>
+                    <p class="q">例：孩子6年後留學，每年要40萬 → 選5年繳儲蓄險，第6年起分年提取</p>
+                    <p><strong>推薦產品</strong>：<strong>智活系列、盈家系列、真智珍寳</strong></p>
+                </div>
+                <div class="card">
+                    <h3>📌 第三步：進階檔（可選）</h3>
+                    <p><strong>口訣</strong>：<br>「加受益人 + 加信託 + 加貸款備用」</p>
+                    <ul>
+                        <li>加受益人：指定誰、什麼條件領錢（例：滿18歲、完成大學）</li>
+                        <li>加信託：大額保單用「保險金信託」防揮霍/爭產</li>
+                        <li>加貸款：保單現金價值可借80%，應急不賣單</li>
+                    </ul>
+                    <p class="muted">新人提示：進階檔是加分題，客戶有興趣再提。</p>
+                    <p><strong>推薦產品</strong>：<strong>摯匯儲畜計劃、尊尚盈家II</strong></p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">行動：把「三步口訣」抄在筆記本首頁，見客前默念三遍</span>
+                <div class="bar" style="width:42%"><i style="width:54%"></i></div>
+            </footer>
+        </section>
+
+        <!-- 案例A 教育金 -->
+        <section class="slide" data-title="案例A 教育金">
+            <header>
+                <h2>案例：內地家庭的子女海外教育金規劃</h2>
+            </header>
+            <main class="grid cols-2">
+                <div class="card">
+                    <h3>客戶画像</h3>
+                    <ul>
+                        <li>40歲上海商人，獨女3歲</li>
+                        <li>年可投50萬，但：① 配置海外資產；② 資金流動性</li>
+                        <li>額外目標：女兒18歲赴美Top 30大學，總預算300萬人民幣</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>方案</h3>
+                    <ul>
+                        <li><strong>盈家系列：</strong>提供5年保證回本期及終期紅利</li>
+                        <li><strong>智活系列：</strong>靈活戶口與增值戶口</li>
+                    </ul>
+                    <p class="muted" style="margin-top:0.8rem;">💡 不是存錢上學，是建一條<span
+                            style="color:var(--accent)">合法跨境通道</span>。</p>
+                </div>
+            </main>
+            <footer class="footer">
+                <span class="muted">練習：若人民幣兌美元跌至8.5，需多存多少才能覆蓋？</span>
+                <div class="bar" style="width:40%"><i style="width:84%"></i></div>
             </footer>
         </section>
 
