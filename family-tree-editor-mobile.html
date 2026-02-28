@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>陈氏族谱 — 自适应编辑器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-muted: #a8a29e;
+  --border: #e7e5e4;
+  --border-light: #f0eeeb;
+  --accent: #92400e;
+  --accent-dark: #451a03;
+  --gold: #d97706;
+  --gold-light: rgba(217,119,6,0.15);
+  --danger: #dc2626;
+  --success: #16a34a;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --topbar-h: 48px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--text-primary);
+  overflow:hidden;height:100%;width:100%;
+  touch-action:manipulation;-webkit-touch-callout:none;
+  -webkit-user-select:none;user-select:none;
+  position:fixed;inset:0;
+}
+.canvas-wrap, .canvas-wrap canvas{touch-action:none}
+input, textarea, .search-input, .sheet-body, .outline-wrap, .search-results{
+  -webkit-user-select:text;
+  user-select:text;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:calc(var(--safe-top)+4px) 10px 4px;
+  background:linear-gradient(135deg,#1c1917,#292524);
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.topbar-left{display:flex;align-items:center;flex:1;min-width:0;gap:6px}
+.topbar-title{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:#fafaf9;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-badge{font-size:9px;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,.1);color:#d6d3d1;border:1px solid rgba(255,255,255,.08)}
+.topbar-actions{display:flex;gap:3px;flex-shrink:0}
+.tbtn{
+  width:34px;height:34px;border-radius:8px;border:none;
+  background:rgba(255,255,255,.08);color:#e7e5e4;
+  font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.tbtn:active{background:rgba(255,255,255,.2)}
+.tbtn.active{background:rgba(217,119,6,.3);color:#fbbf24}
+
+/* ═══ VIEW TABS (Tree / Outline) ═══ */
+.view-tabs{
+  position:fixed;top:calc(var(--safe-top)+var(--topbar-h));left:0;right:0;z-index:95;
+  display:flex;background:var(--surface);border-bottom:1px solid var(--border);
+}
+.vtab{
+  flex:1;padding:8px 0;text-align:center;font-size:12px;font-weight:600;
+  color:var(--text-muted);border:none;background:none;cursor:pointer;
+  font-family:inherit;position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+.vtab.active{color:var(--gold)}
+.vtab.active::after{
+  content:'';position:absolute;bottom:0;left:20%;right:20%;
+  height:2px;background:var(--gold);border-radius:1px;
+}
+/* Focus mode indicator */
+.focus-bar{
+  position:fixed;top:calc(var(--safe-top)+var(--topbar-h)+33px);left:0;right:0;z-index:94;
+  padding:6px 12px;display:none;align-items:center;gap:8px;
+  background:var(--gold-light);border-bottom:1px solid rgba(217,119,6,.2);
+}
+.focus-bar.visible{display:flex}
+.focus-bar-text{flex:1;font-size:12px;font-weight:600;color:var(--accent);font-family:'Noto Serif SC',serif}
+.focus-bar-btn{
+  padding:5px 10px;border-radius:8px;border:1px solid rgba(217,119,6,.3);
+  background:rgba(255,255,255,.6);font-size:11px;font-weight:600;color:var(--accent);
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+}
+
+/* ═══ CANVAS ═══ */
+.canvas-wrap{
+  position:fixed;
+  top:calc(var(--safe-top)+var(--topbar-h)+33px);
+  left:0;right:0;
+  bottom:56px;
+  overflow:hidden;background:var(--bg);
+}
+.canvas-wrap.has-focus{top:calc(var(--safe-top)+var(--topbar-h)+33px+33px)}
+.canvas-wrap canvas{display:block}
+
+/* ═══ OUTLINE VIEW ═══ */
+.outline-container{
+  position:fixed;
+  top:calc(var(--safe-top)+var(--topbar-h)+33px);
+  left:0;right:0;
+  bottom:56px;
+  background:var(--surface);
+  display:none;
+  flex-direction:column;
+}
+.outline-container.active{display:flex}
+
+/* Outline toolbar */
+.ol-toolbar{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  padding:8px 12px;border-bottom:1px solid var(--border);
+  background:var(--surface);overflow-x:auto;
+  scrollbar-width:none;
+}
+.ol-toolbar::-webkit-scrollbar{display:none}
+.ol-tbtn{
+  flex-shrink:0;padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg);
+  font-size:11px;font-weight:600;color:var(--text-secondary);
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+  display:flex;align-items:center;gap:4px;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s,border-color .12s,transform .1s;
+}
+.ol-tbtn:active{background:var(--border);transform:scale(.95)}
+.ol-tbtn.accent{border-color:rgba(217,119,6,.3);color:var(--accent);background:var(--gold-light)}
+.ol-tbtn.accent:active{background:rgba(217,119,6,.25)}
+.ol-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
+.ol-depth-ctrl{
+  display:flex;align-items:center;gap:0;flex-shrink:0;
+}
+.ol-depth-ctrl label{
+  font-size:10px;font-weight:600;color:var(--text-muted);
+  white-space:nowrap;letter-spacing:.3px;padding:0 4px;
+}
+.depth-stepper{
+  display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;background:var(--bg);
+}
+.depth-stepper-btn{
+  width:30px;height:30px;border:none;background:transparent;
+  color:var(--text-secondary);font-size:16px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .1s;
+}
+.depth-stepper-btn:active{background:var(--border)}
+.depth-stepper-btn:disabled{opacity:.25;cursor:not-allowed}
+.depth-stepper-btn:disabled:active{background:transparent}
+.depth-stepper-val{
+  min-width:32px;text-align:center;font-size:13px;font-weight:700;
+  color:var(--accent);padding:0 2px;
+  border-left:1px solid var(--border);border-right:1px solid var(--border);
+  font-family:'Noto Serif SC',serif;line-height:30px;background:var(--gold-light);
+}
+
+.outline-wrap{
+  flex:1;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.outline-wrap::-webkit-scrollbar{display:none}
+.ol-node{
+  display:flex;align-items:center;padding:10px 12px;
+  border-bottom:1px solid var(--border-light);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  transition:background .1s;
+}
+.ol-node:active{background:var(--bg)}
+.ol-node.selected{background:var(--gold-light)}
+.ol-node.on-path{background:rgba(217,119,6,.06)}
+.ol-indent{flex-shrink:0}
+.ol-toggle{
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--text-muted);flex-shrink:0;cursor:pointer;
+  border-radius:6px;margin-right:4px;
+}
+.ol-toggle:active{background:var(--bg)}
+.ol-toggle.has-children{color:var(--gold)}
+.ol-body{flex:1;min-width:0}
+.ol-name{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text-primary)}
+.ol-meta{font-size:10px;color:var(--text-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ol-badge{
+  flex-shrink:0;font-size:9px;padding:2px 7px;border-radius:10px;
+  font-weight:600;margin-left:6px;
+}
+.ol-branch-孟房{background:#fef2f2;color:#b91c1c}
+.ol-branch-仲房{background:#eff6ff;color:#1d4ed8}
+.ol-branch-季房{background:#f0fdf4;color:#15803d}
+.ol-branch-{background:var(--bg);color:var(--text-muted)}
+.ol-count{
+  font-size:9px;color:var(--gold);font-weight:600;margin-left:4px;
+}
+
+/* ═══ MINIMAP ═══ */
+.minimap{
+  position:fixed;z-index:80;border-radius:10px;
+  border:1px solid var(--border);background:rgba(255,255,255,.92);
+  box-shadow:var(--shadow-md);overflow:hidden;
+  backdrop-filter:blur(6px);
+  display:none;
+}
+.minimap.visible{display:block}
+.minimap canvas{display:block}
+.minimap-viewport{
+  position:absolute;border:2px solid var(--gold);border-radius:2px;
+  background:rgba(217,119,6,.08);pointer-events:none;
+}
+.minimap-close{
+  position:absolute;top:2px;right:2px;width:18px;height:18px;
+  border-radius:4px;border:none;background:rgba(0,0,0,.3);color:#fff;
+  font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  z-index:1;
+}
+
+/* ═══ FLOAT CONTROLS ═══ */
+.float-zoom{
+  position:fixed;right:10px;z-index:80;
+  bottom:calc(var(--safe-bottom)+64px);
+  display:flex;flex-direction:column;gap:3px;
+}
+.zbtn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text-secondary);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-md);-webkit-tap-highlight-color:transparent;
+}
+.zbtn:active{background:#f0eeeb;transform:scale(.92)}
+.zoom-pct{text-align:center;font-size:9px;font-weight:600;color:var(--text-muted);padding:1px 0}
+
+/* ═══ TREE TOOLBAR (floating) ═══ */
+.tree-toolbar{
+  position:fixed;z-index:90;
+  left:10px;right:10px;
+  top:calc(var(--safe-top)+var(--topbar-h)+33px+6px);
+  display:flex;align-items:center;gap:5px;
+  padding:6px 10px;border-radius:12px;
+  background:rgba(255,255,255,.95);border:1px solid var(--border);
+  box-shadow:var(--shadow-md);backdrop-filter:blur(8px);
+}
+.tree-toolbar.hidden{display:none}
+.tt-btn{
+  padding:5px 10px;border-radius:7px;
+  border:1px solid var(--border);background:var(--bg);
+  font-size:11px;font-weight:600;color:var(--text-secondary);
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+  display:flex;align-items:center;gap:3px;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s,transform .1s;
+}
+.tt-btn:active{background:var(--border);transform:scale(.95)}
+.tt-btn.accent{border-color:rgba(217,119,6,.3);color:var(--accent);background:var(--gold-light)}
+.tt-sep{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.tt-depth{
+  display:flex;align-items:center;gap:0;flex-shrink:0;
+}
+.tt-depth label{
+  font-size:9px;font-weight:600;color:var(--text-muted);white-space:nowrap;padding:0 3px;
+}
+.tt-stepper{
+  display:flex;align-items:center;border:1px solid var(--border);border-radius:7px;
+  overflow:hidden;background:var(--bg);
+}
+.tt-stepper-btn{
+  width:28px;height:28px;border:none;background:transparent;
+  color:var(--text-secondary);font-size:15px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .1s;
+}
+.tt-stepper-btn:active{background:var(--border)}
+.tt-stepper-btn:disabled{opacity:.25;cursor:not-allowed}
+.tt-stepper-btn:disabled:active{background:transparent}
+.tt-stepper-val{
+  min-width:28px;text-align:center;font-size:12px;font-weight:700;
+  color:var(--accent);padding:0 1px;
+  border-left:1px solid var(--border);border-right:1px solid var(--border);
+  font-family:'Noto Serif SC',serif;line-height:28px;background:var(--gold-light);
+}
+
+/* ═══ QUICK NAV (relatives) ═══ */
+.quick-nav{
+  position:fixed;left:10px;right:60px;z-index:80;
+  bottom:calc(var(--safe-bottom)+64px);
+  display:none;gap:5px;overflow-x:auto;
+  padding:4px 0;scrollbar-width:none;
+}
+.quick-nav::-webkit-scrollbar{display:none}
+.quick-nav.visible{display:flex}
+.qn-btn{
+  flex-shrink:0;padding:6px 12px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface);
+  font-size:11px;font-weight:600;color:var(--text-secondary);
+  cursor:pointer;box-shadow:var(--shadow-sm);white-space:nowrap;
+  font-family:'Noto Serif SC',serif;display:flex;align-items:center;gap:4px;
+  -webkit-tap-highlight-color:transparent;
+}
+.qn-btn:active{background:var(--bg);transform:scale(.95)}
+.qn-btn.parent{border-color:rgba(217,119,6,.3);color:var(--accent)}
+.qn-btn.child{border-color:rgba(22,163,74,.3);color:#15803d}
+
+/* ═══ BOTTOM BAR ═══ */
+.bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  padding:6px 8px calc(var(--safe-bottom)+6px);
+  background:var(--surface);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  box-shadow:0 -2px 12px rgba(0,0,0,.06);
+}
+.bar-btn{
+  display:flex;flex-direction:column;align-items:center;gap:1px;
+  background:none;border:none;color:var(--text-secondary);
+  font-size:9px;cursor:pointer;padding:3px 8px;border-radius:8px;
+  -webkit-tap-highlight-color:transparent;font-family:inherit;
+}
+.bar-btn .bar-icon{font-size:18px;line-height:1}
+.bar-btn:active{background:var(--bg);transform:scale(.92)}
+.bar-btn.primary{color:var(--gold)}
+.bar-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.bar-btn:disabled:active{background:none;transform:none}
+.bar-btn.focus-active{color:var(--gold);position:relative}
+.bar-btn.focus-active::after{
+  content:'';position:absolute;top:2px;right:6px;
+  width:6px;height:6px;border-radius:3px;background:var(--gold);
+}
+
+@media (hover:hover) and (pointer:fine){
+  .tbtn:hover,.bar-btn:hover,.zbtn:hover,.btn:hover,.menu-item:hover,.qn-btn:hover,.nav-chip:hover,.focus-bar-btn:hover{filter:brightness(.98)}
+  .ol-node:hover{background:var(--bg)}
+  .sr-item:hover{background:var(--bg)}
+}
+
+/* ═══ SEARCH ═══ */
+.search-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  display:none;flex-direction:column;
+}
+.search-overlay.visible{display:flex}
+.search-box{
+  margin:calc(var(--safe-top)+8px) 10px 0;
+  background:var(--surface);border-radius:14px;
+  box-shadow:var(--shadow-lg);overflow:hidden;
+}
+.search-input-row{
+  display:flex;align-items:center;padding:4px 12px;gap:8px;
+  border-bottom:1px solid var(--border-light);
+}
+.search-input{
+  flex:1;border:none;outline:none;font-size:16px;padding:10px 0;
+  font-family:'Noto Serif SC',serif;background:transparent;color:var(--text-primary);
+}
+.search-cancel{font-size:13px;color:var(--accent);border:none;background:none;cursor:pointer;padding:8px;font-family:inherit}
+.search-results{max-height:55vh;overflow-y:auto;padding:2px 0}
+.search-results::-webkit-scrollbar{display:none}
+.sr-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.sr-item:active{background:var(--bg)}
+.sr-name{font-family:'Noto Serif SC',serif;font-size:14px;font-weight:600;color:var(--text-primary)}
+.sr-path{font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sr-badge{flex-shrink:0;font-size:9px;padding:2px 7px;border-radius:10px;background:var(--gold-light);color:var(--accent);font-weight:600}
+.search-empty{padding:20px 14px;text-align:center;color:var(--text-muted);font-size:13px}
+
+/* ═══ BOTTOM SHEET ═══ */
+.sheet-backdrop{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.4);backdrop-filter:blur(2px);display:none;opacity:0;transition:opacity .25s ease}
+.sheet-backdrop.visible{display:block;opacity:1}
+.sheet{
+  position:fixed;left:0;right:0;z-index:160;
+  bottom:0;transform:translateY(100%);
+  background:var(--surface);border-radius:20px 20px 0 0;
+  box-shadow:0 -8px 40px rgba(0,0,0,.18);
+  transition:transform .32s cubic-bezier(.32,.72,.37,1);
+  max-height:85vh;display:flex;flex-direction:column;
+}
+.sheet.open{transform:translateY(0)}
+.sheet-handle{display:flex;justify-content:center;padding:10px 0 2px;cursor:grab;flex-shrink:0}
+.sheet-handle-bar{width:40px;height:4px;border-radius:2px;background:#d6d3d1}
+.sheet-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 18px 12px;border-bottom:1px solid var(--border-light);flex-shrink:0;
+}
+.sheet-title{
+  font-family:'Noto Serif SC',serif;font-size:17px;font-weight:700;
+  color:var(--text-primary);display:flex;align-items:center;gap:8px;
+}
+.sheet-title::before{content:'✏️';font-size:15px}
+.sheet-close{
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:var(--bg);color:var(--text-muted);font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .15s,transform .15s;
+}
+.sheet-close:active{background:var(--border);transform:scale(.9)}
+.sheet-body{
+  flex:1;overflow-y:auto;padding:16px 18px calc(var(--safe-bottom)+16px);
+  -webkit-overflow-scrolling:touch;
+}
+.sheet-body::-webkit-scrollbar{display:none}
+
+/* ═══ NAV CHIPS (in editor sheet) ═══ */
+.nav-chips{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:1px solid var(--border-light);
+}
+.nav-chip{
+  padding:7px 12px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface);font-size:12px;font-weight:600;
+  color:var(--text-secondary);cursor:pointer;
+  font-family:'Noto Serif SC',serif;
+  display:flex;align-items:center;gap:5px;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s,border-color .12s,transform .1s;
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.nav-chip:active{background:var(--bg);transform:scale(.95)}
+.nav-chip.gold{border-color:rgba(217,119,6,.35);color:var(--accent);background:var(--gold-light)}
+.nav-chip .chip-icon{font-size:13px}
+
+/* Path display */
+.path-display{
+  padding:10px 14px;border-radius:12px;background:var(--bg);
+  margin-bottom:16px;font-size:12px;line-height:2;
+  font-family:'Noto Serif SC',serif;color:var(--text-muted);
+  word-break:break-all;border:1px solid var(--border-light);
+}
+.path-display .pd-arrow{color:var(--gold);margin:0 4px;font-weight:400}
+.path-display .pd-current{color:var(--gold);font-weight:700;background:var(--gold-light);padding:2px 8px;border-radius:6px}
+
+/* ═══ FORM SECTION DIVIDER ═══ */
+.sheet-section-label{
+  font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.6px;
+  text-transform:uppercase;margin:18px 0 10px;padding-bottom:6px;
+  border-bottom:1px solid var(--border-light);
+  font-family:'Noto Serif SC',serif;
+  display:flex;align-items:center;gap:6px;
+}
+.sheet-section-label:first-of-type{margin-top:0}
+.sheet-section-label .sec-icon{font-size:13px}
+
+/* Form fields */
+.field{margin-bottom:14px}
+.field-label{
+  font-size:11px;font-weight:600;color:var(--text-secondary);
+  letter-spacing:.3px;margin-bottom:5px;display:flex;align-items:center;gap:4px;
+}
+.field-label .req{color:var(--danger);font-size:13px}
+.field-input{
+  width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:12px;
+  font-size:15px;font-family:'Noto Serif SC',serif;background:var(--bg);
+  color:var(--text-primary);-webkit-appearance:none;appearance:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.field-input:focus{
+  outline:none;border-color:var(--accent);background:#fff;
+  box-shadow:0 0 0 3px rgba(146,64,14,.1),0 2px 8px rgba(146,64,14,.06);
+}
+.field-input::placeholder{color:var(--text-muted);font-size:13px}
+textarea.field-input{resize:none;min-height:56px;line-height:1.6}
+
+/* Button area */
+.btn-grid{
+  display:flex;flex-direction:column;gap:8px;margin-top:20px;
+  padding-top:16px;border-top:1px solid var(--border-light);
+}
+.btn-row{display:flex;gap:8px}
+.btn{
+  padding:12px 16px;border-radius:12px;font-size:14px;font-weight:600;
+  cursor:pointer;border:none;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .1s,box-shadow .1s,filter .1s;
+}
+.btn:active{transform:scale(.96)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent-dark),#78350f);color:#fff;
+  box-shadow:0 2px 8px rgba(69,26,3,.25);
+}
+.btn-primary:active{box-shadow:0 1px 4px rgba(69,26,3,.2)}
+.btn-add{background:var(--success);color:#fff;box-shadow:0 2px 8px rgba(22,163,74,.2)}
+.btn-danger{
+  background:#fff5f5;color:var(--danger);border:1.5px solid #fecaca;
+}
+.btn-danger:active{background:#fef2f2}
+.btn-outline{background:transparent;color:var(--text-secondary);border:1.5px solid var(--border)}
+.btn-outline:active{background:var(--bg)}
+.btn-full{width:100%}
+.btn-flex{flex:1}
+.btn-graft{display:none}
+.btn-graft.visible{display:flex}
+
+/* ═══ MENU SHEET ═══ */
+.menu-sheet{
+  position:fixed;left:0;right:0;z-index:170;
+  bottom:0;transform:translateY(100%);
+  background:var(--surface);border-radius:16px 16px 0 0;
+  box-shadow:0 -4px 24px rgba(0,0,0,.15);
+  transition:transform .3s cubic-bezier(.32,.72,.37,1);
+  padding-bottom:calc(var(--safe-bottom)+12px);
+}
+.menu-sheet.open{transform:translateY(0)}
+.menu-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  font-size:14px;color:var(--text-primary);
+}
+.menu-item:active{background:var(--bg)}
+.menu-item .mi-icon{font-size:18px;width:26px;text-align:center}
+.menu-item .mi-desc{font-size:10px;color:var(--text-muted);margin-top:1px}
+.menu-sep{height:1px;background:var(--border-light);margin:2px 16px}
+.menu-cancel{
+  display:block;width:calc(100% - 32px);margin:6px 16px 0;padding:12px;
+  border-radius:12px;border:none;background:var(--bg);color:var(--text-secondary);
+  font-size:14px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;
+}
+
+/* ═══ TOAST ═══ */
+.toast-box{
+  position:fixed;top:calc(var(--safe-top)+52px);left:10px;right:10px;
+  z-index:999;display:flex;flex-direction:column;gap:4px;pointer-events:none;
+}
+.toast{
+  padding:10px 14px;border-radius:10px;color:#fff;font-size:12px;
+  box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:6px;
+  animation:tIn .25s ease;pointer-events:auto;
+}
+.toast-success{background:#14532d}
+.toast-warning{background:#78350f}
+.toast-error{background:#7f1d1d}
+.toast .tc{margin-left:auto;cursor:pointer;opacity:.6;font-size:16px;padding:4px}
+@keyframes tIn{from{transform:translateY(-8px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* ═══ MODAL ═══ */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.modal-bg.hidden{display:none}
+.modal-card{background:var(--surface);border-radius:16px;padding:20px;width:100%;max-width:300px;box-shadow:var(--shadow-lg)}
+.modal-card p{font-size:14px;margin-bottom:16px;line-height:1.6}
+.modal-actions{display:flex;gap:8px}
+.modal-actions .btn{flex:1}
+
+/* ═══ LOADING ═══ */
+.loading{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+}
+.loading.hidden{display:none}
+.loading-spinner{
+  width:28px;height:28px;border:3px solid var(--border);
+  border-top-color:var(--gold);border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--text-muted);font-family:'Noto Serif SC',serif}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar{
+  position:fixed;z-index:80;
+  left:10px;bottom:calc(var(--safe-bottom)+64px);
+  padding:4px 10px;border-radius:8px;
+  background:rgba(255,255,255,.9);border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);backdrop-filter:blur(6px);
+  font-size:9px;color:var(--text-muted);font-weight:600;
+  display:flex;gap:8px;
+  transition:bottom .2s ease;
+}
+.stats-bar.shifted{
+  bottom:calc(var(--safe-bottom)+104px);
+}
+
+/* ═══ UX TIP ═══ */
+.ux-tip{
+  position:fixed;z-index:85;
+  left:10px;right:10px;
+  bottom:calc(var(--safe-bottom)+112px);
+  padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,.95);border:1px solid var(--border);
+  box-shadow:var(--shadow-md);backdrop-filter:blur(6px);
+  display:flex;align-items:center;gap:8px;
+}
+.ux-tip.hidden{display:none}
+.ux-tip-text{flex:1;font-size:11px;color:var(--text-secondary);line-height:1.35}
+.ux-tip-close{
+  width:22px;height:22px;border-radius:6px;border:none;
+  background:var(--bg);color:var(--text-muted);font-size:13px;cursor:pointer;
+}
+
+/* ═══ DESKTOP ADAPTIVE LAYOUT ═══ */
+@media (min-width: 1024px) {
+  html, body {
+    position: relative;
+    inset: auto;
+  }
+  .topbar {
+    padding: 8px 16px;
+  }
+  .topbar-title { font-size: 16px; }
+  .topbar-badge { font-size: 11px; }
+  .tbtn { width: 38px; height: 38px; font-size: 16px; }
+
+  .view-tabs { top: 54px; }
+  .focus-bar { top: 87px; }
+
+  .canvas-wrap,
+  .outline-container {
+    top: 87px;
+    right: 380px;
+    bottom: 0;
+  }
+  .canvas-wrap.has-focus { top: 120px; }
+
+  .bottom-bar {
+    left: auto;
+    right: 0;
+    top: 87px;
+    bottom: 0;
+    width: 380px;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 12px;
+    border-top: none;
+    border-left: 1px solid var(--border);
+    box-shadow: none;
+    overflow-y: auto;
+  }
+  .bar-btn {
+    width: calc(50% - 4px);
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .bar-btn .bar-icon { font-size: 18px; }
+
+  .sheet {
+    left: auto;
+    right: 0;
+    top: 87px;
+    bottom: 0;
+    width: 400px;
+    max-height: none;
+    border-radius: 16px 0 0 0;
+    transform: translateX(100%);
+    transition: transform .24s cubic-bezier(.32,.72,.37,1);
+    box-shadow: -6px 0 30px rgba(0,0,0,.14);
+  }
+  .sheet.open { transform: translateX(0); }
+  .sheet-handle { display: none; }
+  .sheet-body { padding: 20px 22px 24px; }
+
+  .menu-sheet {
+    left: auto;
+    right: 16px;
+    top: 58px;
+    bottom: auto;
+    width: min(360px, calc(100vw - 32px));
+    border-radius: 14px;
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .2s ease, opacity .2s ease;
+    padding-bottom: 8px;
+  }
+  .menu-sheet.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .menu-cancel { display: none; }
+
+  .float-zoom {
+    right: 396px;
+    bottom: 16px;
+  }
+  .tree-toolbar {
+    left: 16px;
+    right: auto;
+    top: 95px;
+  }
+  .quick-nav {
+    left: 16px;
+    right: 456px;
+    bottom: 16px;
+  }
+  .stats-bar {
+    left: 16px;
+    bottom: 16px;
+  }
+  .stats-bar.shifted {
+    bottom: 56px;
+  }
+  .ux-tip{
+    left: 16px;
+    right: 396px;
+    bottom: 54px;
+  }
+  .minimap {
+    right: 396px !important;
+    top: 98px !important;
+  }
+
+  .search-box {
+    width: min(760px, calc(100vw - 48px));
+    margin: 72px auto 0;
+  }
+  .search-results { max-height: min(65vh, 620px); }
+
+  .ol-node { padding: 11px 14px; }
+  .ol-name { font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">加载族谱中…</div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-title" id="hTitle">陈氏宗支总图</span>
+    <span class="topbar-badge" id="hBadge">—</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="tbtn" onclick="toggleMinimap()" id="btnMinimap" title="小地图">🗺</button>
+    <button class="tbtn" onclick="openSearch()" title="搜索">🔍</button>
+    <button class="tbtn" onclick="openMenu()" title="菜单">☰</button>
+  </div>
+</div>
+
+<!-- VIEW TABS -->
+<div class="view-tabs" id="viewTabs">
+  <button class="vtab active" id="tabTree" onclick="switchView('tree')">🌳 族谱树</button>
+  <button class="vtab" id="tabOutline" onclick="switchView('outline')">📋 大纲</button>
+</div>
+
+<!-- FOCUS BAR -->
+<div class="focus-bar" id="focusBar">
+  <span class="focus-bar-text" id="focusBarText">聚焦: —</span>
+  <button class="focus-bar-btn" onclick="exitFocus()">↩ 返回全图</button>
+</div>
+
+<!-- CANVAS (tree view) -->
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="cv"></canvas>
+</div>
+
+<!-- OUTLINE (list view) -->
+<div class="outline-container" id="outlineContainer">
+  <div class="ol-toolbar" id="olToolbar">
+    <button class="ol-tbtn accent" onclick="olExpandAll()">📖 全部展开</button>
+    <button class="ol-tbtn" onclick="olCollapseAll()">📊 全部折叠</button>
+    <div class="ol-sep"></div>
+    <div class="ol-depth-ctrl">
+      <label>展开至</label>
+      <div class="depth-stepper">
+        <button class="depth-stepper-btn" id="olDepthMinus" onclick="olStepDepth(-1)">−</button>
+        <span class="depth-stepper-val" id="olDepthVal">全</span>
+        <button class="depth-stepper-btn" id="olDepthPlus" onclick="olStepDepth(1)">+</button>
+      </div>
+      <label>代</label>
+    </div>
+  </div>
+  <div class="outline-wrap" id="outlineWrap"></div>
+</div>
+
+<!-- MINIMAP -->
+<div class="minimap" id="minimap">
+  <button class="minimap-close" onclick="toggleMinimap()">×</button>
+  <canvas id="mmCanvas"></canvas>
+  <div class="minimap-viewport" id="mmViewport"></div>
+</div>
+
+<!-- ZOOM -->
+<div class="float-zoom" id="floatZoom">
+  <button class="zbtn" onclick="zoomIn()">+</button>
+  <div class="zoom-pct" id="zoomPct">100%</div>
+  <button class="zbtn" onclick="zoomOut()">−</button>
+  <button class="zbtn" onclick="zoomFit()" style="font-size:12px;margin-top:2px">⊡</button>
+</div>
+
+<!-- TREE TOOLBAR -->
+<div class="tree-toolbar" id="treeToolbar">
+  <button class="tt-btn accent" onclick="treeExpandAll()">📖 展开</button>
+  <button class="tt-btn" onclick="treeCollapseAll()">📊 折叠</button>
+  <div class="tt-sep"></div>
+  <div class="tt-depth">
+    <label>至</label>
+    <div class="tt-stepper">
+      <button class="tt-stepper-btn" id="treeDepthMinus" onclick="treeStepDepth(-1)">−</button>
+      <span class="tt-stepper-val" id="treeDepthVal">全</span>
+      <button class="tt-stepper-btn" id="treeDepthPlus" onclick="treeStepDepth(1)">+</button>
+    </div>
+    <label>代</label>
+  </div>
+</div>
+
+<!-- QUICK NAV -->
+<div class="quick-nav" id="quickNav"></div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <span id="statNodes">—</span>
+  <span id="statGens">—</span>
+  <span id="statSel">未选中</span>
+</div>
+
+<!-- UX TIP -->
+<div class="ux-tip hidden" id="uxTip">
+  <span class="ux-tip-text" id="uxTipText">提示：单击选择节点；再次单击取消选择；双击打开编辑。</span>
+  <button class="ux-tip-close" onclick="closeUxTip()">×</button>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="bar-btn" onclick="zoomFit()">
+    <span class="bar-icon">🌳</span><span>全览</span>
+  </button>
+  <button class="bar-btn" id="btnFocus" onclick="toggleFocusMode()">
+    <span class="bar-icon">🎯</span><span>聚焦</span>
+  </button>
+  <button class="bar-btn primary" onclick="openSearch()">
+    <span class="bar-icon">🔍</span><span>搜索</span>
+  </button>
+  <button class="bar-btn" id="btnEdit" onclick="openSheetForSelected()">
+    <span class="bar-icon">✏️</span><span>编辑</span>
+  </button>
+  <button class="bar-btn" onclick="openMenu()">
+    <span class="bar-icon">⚙️</span><span>更多</span>
+  </button>
+</div>
+
+<!-- SEARCH -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <div class="search-input-row">
+      <span style="font-size:16px;color:var(--text-muted)">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="搜索姓名…" autocomplete="off" autocorrect="off" autocapitalize="off">
+      <button class="search-cancel" onclick="closeSearch()">取消</button>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div class="search-empty">输入姓名搜索族谱成员</div>
+    </div>
+  </div>
+  <div style="flex:1" onclick="closeSearch()"></div>
+</div>
+
+<!-- EDITOR SHEET -->
+<div class="sheet-backdrop" id="sheetBackdrop"></div>
+<div class="sheet" id="editorSheet">
+  <div class="sheet-handle" id="sheetHandle"><div class="sheet-handle-bar"></div></div>
+  <div class="sheet-header">
+    <span class="sheet-title" id="sheetTitle">编辑节点</span>
+    <button class="sheet-close" onclick="closeSheet()">×</button>
+  </div>
+  <div class="sheet-body">
+    <!-- Navigation chips -->
+    <div class="nav-chips" id="navChips"></div>
+    <!-- Path -->
+    <div class="path-display" id="pathDisplay"></div>
+    <!-- Fields -->
+    <div class="sheet-section-label"><span class="sec-icon">📝</span>基本信息</div>
+    <div class="field"><label class="field-label">姓名 <span class="req">*</span></label><input class="field-input" id="eName" placeholder="输入姓名"></div>
+    <div style="display:flex;gap:10px">
+      <div class="field" style="flex:1"><label class="field-label">世代 <span class="req">*</span></label><input class="field-input" id="eGen" type="number" min="1" inputmode="numeric" placeholder="第几代"></div>
+      <div class="field" style="flex:1"><label class="field-label">房支</label><input class="field-input" id="eBranch" placeholder="孟/仲/季房"></div>
+    </div>
+    <div class="sheet-section-label"><span class="sec-icon">👥</span>家庭信息</div>
+    <div class="field"><label class="field-label">配偶</label><input class="field-input" id="eSpouse" placeholder="某氏"></div>
+    <div class="sheet-section-label"><span class="sec-icon">📋</span>备注</div>
+    <div class="field"><label class="field-label">备注</label><textarea class="field-input" id="eNote" rows="2" placeholder="其他信息"></textarea></div>
+    <div class="field"><label class="field-label">世系缺失说明</label><input class="field-input" id="eGap" placeholder="如：三至五代失载"></div>
+    <div class="btn-grid">
+      <button class="btn btn-primary btn-full" onclick="saveNode()">💾 保存修改</button>
+      <div class="btn-row">
+        <button class="btn btn-add btn-flex" onclick="addChild()">+ 添加子嗣</button>
+        <button class="btn btn-outline btn-graft btn-flex" id="btnGraftLeaf" onclick="doGraftSingle()">🌿 展开子树</button>
+      </div>
+      <button class="btn btn-danger btn-full" onclick="deleteNode()">🗑 删除此节点</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU SHEET -->
+<div class="menu-sheet" id="menuSheet">
+  <div class="sheet-handle"><div class="sheet-handle-bar"></div></div>
+  <div class="menu-item" onclick="doImport();closeMenuSafe()">
+    <span class="mi-icon">📂</span>
+    <div><div>导入 JSON</div><div class="mi-desc">加载新的族谱文件</div></div>
+  </div>
+  <div class="menu-item" onclick="doGraft();closeMenuSafe()">
+    <span class="mi-icon">🌿</span>
+    <div><div>嫁接子树</div><div class="mi-desc">合并多个子树文件</div></div>
+  </div>
+  <div class="menu-sep"></div>
+  <div class="menu-item" onclick="smartCollapse();closeMenuSafe()">
+    <span class="mi-icon">📊</span>
+    <div><div>智能折叠</div><div class="mi-desc">自动按8代折叠，减少视觉干扰</div></div>
+  </div>
+  <div class="menu-item" onclick="expandAll();closeMenuSafe()">
+    <span class="mi-icon">📖</span>
+    <div><div>全部展开</div><div class="mi-desc">展开所有折叠的节点</div></div>
+  </div>
+  <div class="menu-sep"></div>
+  <div class="menu-item" onclick="doExportPNG();closeMenuSafe()">
+    <span class="mi-icon">📷</span>
+    <div><div>导出图片</div><div class="mi-desc">保存为 PNG</div></div>
+  </div>
+  <div class="menu-item" onclick="doDownload();closeMenuSafe()">
+    <span class="mi-icon">💾</span>
+    <div><div>下载 JSON</div><div class="mi-desc">保存族谱数据</div></div>
+  </div>
+  <div class="menu-item" onclick="showExportSubtreesModal();closeMenuSafe()">
+    <span class="mi-icon">📦</span>
+    <div><div>导出子树</div><div class="mi-desc">按世代区间拆分</div></div>
+  </div>
+  <div class="menu-sep"></div>
+  <div class="menu-item" onclick="showHelpModal();closeMenuSafe()">
+    <span class="mi-icon">❓</span>
+    <div><div>使用说明</div><div class="mi-desc">查看主要手势与快捷操作</div></div>
+  </div>
+  <button class="menu-cancel" onclick="closeMenuSafe()">取消</button>
+</div>
+
+<!-- HIDDEN -->
+<input type="file" id="fImport" accept=".json" style="display:none">
+<input type="file" id="fGraft" accept=".json" multiple style="display:none">
+<input type="file" id="fGraftOne" accept=".json" style="display:none">
+<div class="toast-box" id="toasts"></div>
+<div class="modal-bg hidden" id="modal">
+  <div class="modal-card">
+    <p id="modalMsg"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="modalNo">取消</button>
+      <button class="btn btn-danger" id="modalYes">确认</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg hidden" id="tierModal">
+  <div class="modal-card">
+    <p style="font-weight:600;margin-bottom:8px">📦 导出子树</p>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">按世代区间拆分为多个 JSON 文件。</p>
+    <div class="field" style="margin-bottom:14px">
+      <label class="field-label">每层世代数</label>
+      <input class="field-input" id="tierSizeInput" type="number" min="2" max="50" value="8" inputmode="numeric" style="width:90px">
+    </div>
+    <div id="tierPreview" style="font-size:11px;color:var(--text-muted);margin-bottom:14px;line-height:1.6;max-height:100px;overflow-y:auto"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeTierModal()">取消</button>
+      <button class="btn btn-primary" onclick="doExportSubtrees()">导出</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg hidden" id="helpModal">
+  <div class="modal-card" style="max-width:340px">
+    <p style="font-weight:700;margin-bottom:10px">🧭 使用说明</p>
+    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.8">
+      1) 单击节点选中，再次单击取消。<br>
+      2) 双击节点打开编辑。<br>
+      3) 拖动画布平移，滚轮或 +/- 缩放，0 全览。<br>
+      4) Ctrl/Cmd+F 搜索，Esc 关闭当前面板。<br>
+      5) 大树建议先用“智能折叠”再逐步展开。
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="closeHelpModal()">我知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════
+const DEFAULT_DATA = {"title":"陈氏宗支总图","generationRange":"1—8代","originalPage":24,"notes":["信儿（仲房）中间世系缺失，仅知八代有叶","可评（季房）康熙元年前（1662年）不戒于火，被火焚如失传，三至五代世系缺失"],"tree":{"name":"恭道祖","generation":1,"spouse":"祖妣黄氏","children":[{"name":"大志","generation":2,"branch":"孟房","children":[{"name":"文旺","generation":3,"children":[{"name":"昶","generation":4,"children":[{"name":"阜","generation":5,"children":[{"name":"亭","generation":6,"children":[{"name":"细广","generation":7,"children":[{"name":"领南","generation":8},{"name":"周南","generation":8}]},{"name":"骚","generation":7,"children":[{"name":"纪","generation":8}]}]},{"name":"善","generation":6,"children":[{"name":"政","generation":7,"children":[{"name":"一举","generation":8}]},{"name":"俯","generation":7,"children":[{"name":"朝纲","generation":8}]},{"name":"院","generation":7,"children":[{"name":"朝举","generation":8},{"name":"秋科","generation":8}]}]},{"name":"丙","generation":6,"children":[{"name":"弟","generation":7,"children":[{"name":"卓卿","generation":8}]}]}]},{"name":"义","generation":5,"children":[{"name":"甲","generation":6,"children":[{"name":"细弟","generation":7,"children":[{"name":"如珪","generation":8},{"name":"如璧","generation":8}]}]},{"name":"三象","generation":6,"children":[{"name":"智","generation":7,"children":[{"name":"通","generation":8}]}]}]}]}]}]},{"name":"信儿","generation":2,"branch":"仲房","note":"中间世系缺失，直接记录到八代","children":[{"name":"叶","generation":8,"generationGap":"三代至七代失载"}]},{"name":"可评","generation":2,"branch":"季房","note":"康熙元年前（1662年）不戒于火，被火焚如失传，三至五代世系缺失","children":[{"name":"洪","generation":6,"generationGap":"三至五代因火灾失载","children":[{"name":"表","generation":7,"children":[{"name":"积万","generation":8},{"name":"积学","generation":8},{"name":"积豪","generation":8}]},{"name":"环","generation":7,"children":[{"name":"素学","generation":8},{"name":"陵","generation":8},{"name":"遇卿","generation":8}]}]},{"name":"韬","generation":6,"generationGap":"三至五代因火灾失载","children":[{"name":"召","generation":7,"children":[{"name":"九降","generation":8}]},{"name":"部","generation":7,"children":[{"name":"九棘","generation":8}]},{"name":"启","generation":7,"children":[{"name":"必新","generation":8}]}]}]}]}};
+
+let DATA = structuredClone(DEFAULT_DATA);
+let selected = null;      // selected layout node
+let nodes = [];
+let edges = [];
+let allDataNodes = [];     // flat list {data, parentData} for search
+let highlightPath = null;  // Set of data nodes on path to root for highlighting
+
+// Layout constants
+const NW = 110, NH = 48, GAP_X = 14, ROW_H = 82;
+const TOGGLE_R = 13;
+
+// Branch colors
+const BR = {
+  '孟房':{fill:'#fef2f2',stroke:'#e7a1a1',accent:'#b91c1c',text:'#7f1d1d',line:'rgba(185,28,28,.35)',pathLine:'rgba(185,28,28,.85)'},
+  '仲房':{fill:'#eff6ff',stroke:'#93c5fd',accent:'#1d4ed8',text:'#1e3a5f',line:'rgba(29,78,216,.35)',pathLine:'rgba(29,78,216,.85)'},
+  '季房':{fill:'#f0fdf4',stroke:'#86efac',accent:'#15803d',text:'#14532d',line:'rgba(21,128,61,.35)',pathLine:'rgba(21,128,61,.85)'},
+};
+const BR_DEF = {fill:'#fafaf9',stroke:'#d6d3d1',accent:'#78716c',text:'#44403c',line:'rgba(120,113,108,.3)',pathLine:'rgba(120,113,108,.75)'};
+
+let cam = {x:0,y:0,scale:1};
+let canvas, ctx;
+const dpr = window.devicePixelRatio||1;
+
+// Perf caches
+let _rafId=0, _drawPending=false;
+let _bbox = {xMin:0,xMax:0,yMin:0,yMax:0};
+let _vp = {xMin:-1e9,yMin:-1e9,xMax:1e9,yMax:1e9};
+const _dataToNode = new Map();
+const _descCache = new Map();
+
+let maxGen = 1;
+let currentView = 'tree'; // 'tree' | 'outline'
+
+// Focus mode
+let focusRoot = null; // data node or null
+let fullData = null;  // backup of DATA when in focus mode
+
+// Touch
+let _touchDrag=null, _pinch=null, _tapStart=null, _tapTimer=null, _longPress=null, _isTouching=false;
+
+// Minimap
+let mmVisible = false;
+let mmCanvas, mmCtx;
+const MM_W = 140, MM_H = 100;
+const DESKTOP_BP = 1024;
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  canvas = document.getElementById('cv');
+  ctx = canvas.getContext('2d');
+  mmCanvas = document.getElementById('mmCanvas');
+  mmCtx = mmCanvas.getContext('2d');
+  mmCanvas.width = MM_W * dpr;
+  mmCanvas.height = MM_H * dpr;
+  mmCanvas.style.width = MM_W + 'px';
+  mmCanvas.style.height = MM_H + 'px';
+
+  resizeCanvas();
+  rebuildAllDataIndex();
+  // Smart initial collapse for large trees
+  const totalNodes = countAllNodes(DATA.tree);
+  if (totalNodes > 80) {
+    smartCollapseInternal(8);
+    toast(`已智能折叠 (${totalNodes} 人)`, 'success');
+  }
+  buildLayout();
+  updateHeader();
+  updateStats();
+  updateActionState();
+  setupUXTip();
+  syncDepthUI();
+  setTimeout(() => {
+    zoomFit();
+    document.getElementById('loading').classList.add('hidden');
+  }, 120);
+
+  canvas.addEventListener('touchstart', onTouchStart, {passive:false});
+  canvas.addEventListener('touchmove', onTouchMove, {passive:false});
+  canvas.addEventListener('touchend', onTouchEnd, {passive:false});
+  canvas.addEventListener('touchcancel', onTouchEnd, {passive:false});
+  canvas.addEventListener('mousedown', onMouseDown);
+  canvas.addEventListener('mousemove', onMouseMove);
+  canvas.addEventListener('mouseup', onMouseUp);
+  canvas.addEventListener('dblclick', onCanvasDblClick);
+  canvas.addEventListener('mouseleave', onMouseUp);
+  canvas.addEventListener('wheel', onWheel, {passive:false});
+  window.addEventListener('resize', () => {
+    if (focusRoot) updateFocusUI(true);
+    else updateFocusUI(false);
+    resizeCanvas();
+    draw();
+  });
+  document.addEventListener('keydown', onGlobalKeydown);
+  document.getElementById('searchInput').addEventListener('input', onSearchInput);
+
+  // Sheet drag to dismiss
+  setupSheetDrag();
+
+  // Minimap touch nav
+  setupMinimapTouch();
+
+  // Position minimap
+  const mm = document.getElementById('minimap');
+  mm.style.width = MM_W + 'px';
+  mm.style.height = (MM_H + 2) + 'px';
+  mm.style.right = '10px';
+  mm.style.top = 'calc(var(--safe-top) + ' + (48 + 33 + 8) + 'px)';
+});
+
+function countAllNodes(d) { let c = 1; if (d.children) for (const ch of d.children) c += countAllNodes(ch); return c; }
+
+function resizeCanvas() {
+  const wrap = document.getElementById('canvasWrap');
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function safeExtent(arr, fn) {
+  let min = Infinity, max = -Infinity;
+  for (let i = 0; i < arr.length; i++) { const v = fn(arr[i]); if (v < min) min = v; if (v > max) max = v; }
+  return [min, max];
+}
+
+// ═══════════════════════════════════════
+// DATA INDEX
+// ═══════════════════════════════════════
+function rebuildAllDataIndex() {
+  allDataNodes = [];
+  _walkData(DATA.tree, null);
+  // Also index fullData if in focus mode
+  if (fullData && fullData.tree) {
+    _walkDataAll(fullData.tree, null);
+  }
+}
+function _walkData(d, parent) {
+  allDataNodes.push({data: d, parentData: parent});
+  if (d.children) for (const c of d.children) _walkData(c, d);
+}
+function _walkDataAll(d, parent) {
+  // Add only if not already indexed
+  if (!allDataNodes.some(e => e.data === d)) {
+    allDataNodes.push({data: d, parentData: parent});
+  }
+  if (d.children) for (const c of d.children) _walkDataAll(c, d);
+}
+function getAncestryPath(dataNode) {
+  const path = [];
+  let cur = dataNode;
+  while (cur) {
+    path.unshift(cur.name);
+    const entry = allDataNodes.find(e => e.data === cur);
+    cur = entry ? entry.parentData : null;
+  }
+  return path;
+}
+
+// ═══════════════════════════════════════
+// LAYOUT
+// ═══════════════════════════════════════
+function buildLayout() {
+  nodes = []; edges = [];
+  _dataToNode.clear(); _descCache.clear();
+  flattenTree(DATA.tree, null);
+  for (const n of nodes) {
+    if (!n.data.branch && n.parent) n._br = n.parent._br || n.parent.data.branch;
+    else n._br = n.data.branch || (n.parent ? n.parent._br : null);
+  }
+  layoutX(DATA.tree, 0);
+  for (const n of nodes) n.y = (n.data.generation - 1) * ROW_H;
+  if (nodes.length) {
+    const [bxMin,bxMax] = safeExtent(nodes, n=>n.x);
+    const [byMin,byMax] = safeExtent(nodes, n=>n.y);
+    _bbox = {xMin:bxMin-NW/2, xMax:bxMax+NW/2, yMin:byMin-NH/2, yMax:byMax+NH/2};
+  }
+  maxGen = 1;
+  for (const n of nodes) if (n.data.generation > maxGen) maxGen = n.data.generation;
+}
+
+function flattenTree(data, parentNode) {
+  const n = {data, parent:parentNode, children:[], x:0, y:0, _br:null, _collapsed:data._collapsed||false};
+  nodes.push(n); _dataToNode.set(data, n);
+  if (parentNode) { parentNode.children.push(n); edges.push({parent:parentNode, child:n}); }
+  if (data.children && !n._collapsed) for (const c of data.children) flattenTree(c, n);
+  return n;
+}
+
+function layoutX(data, xOff) {
+  const node = _dataToNode.get(data);
+  if (!node) return xOff;
+  if (node._collapsed || !data.children || !data.children.length) {
+    node.x = xOff + NW/2; return xOff + NW + GAP_X;
+  }
+  let cursor = xOff;
+  for (const ch of data.children) cursor = layoutX(ch, cursor);
+  const fc = _dataToNode.get(data.children[0]);
+  const lc = _dataToNode.get(data.children[data.children.length-1]);
+  node.x = (fc.x + lc.x) / 2;
+  return cursor;
+}
+
+function countDesc(data) {
+  if (_descCache.has(data)) return _descCache.get(data);
+  if (!data.children) { _descCache.set(data,0); return 0; }
+  let c = data.children.length;
+  for (const ch of data.children) c += countDesc(ch);
+  _descCache.set(data,c); return c;
+}
+
+// ═══════════════════════════════════════
+// HIGHLIGHT PATH (root -> selected)
+// ═══════════════════════════════════════
+function updateHighlightPath() {
+  if (!selected) { highlightPath = null; return; }
+  highlightPath = new Set();
+  let cur = selected;
+  while (cur) { highlightPath.add(cur.data); cur = cur.parent; }
+}
+
+// ═══════════════════════════════════════
+// DRAW
+// ═══════════════════════════════════════
+function _drawImmediate() {
+  _drawPending = false;
+  const W = canvas.width/dpr, H = canvas.height/dpr;
+  ctx.clearRect(0,0,W,H);
+  _vp.xMin = -cam.x/cam.scale - NW*2;
+  _vp.yMin = -cam.y/cam.scale - NH*3;
+  _vp.xMax = (W-cam.x)/cam.scale + NW*2;
+  _vp.yMax = (H-cam.y)/cam.scale + NH*3;
+
+  ctx.save();
+  ctx.translate(cam.x, cam.y);
+  ctx.scale(cam.scale, cam.scale);
+  drawGrid();
+  drawEdges();
+  drawNodes();
+  ctx.restore();
+  updateZoomPct();
+  if (mmVisible) drawMinimap();
+}
+
+function draw() {
+  if (_drawPending) return;
+  _drawPending = true;
+  cancelAnimationFrame(_rafId);
+  _rafId = requestAnimationFrame(_drawImmediate);
+}
+
+function drawGrid() {
+  const gens = new Set();
+  for (const n of nodes) gens.add(n.data.generation);
+  const genArr = [...gens].sort((a,b)=>a-b);
+  const xMin = _bbox.xMin - NW, xMax = _bbox.xMax + NW;
+
+  ctx.save();
+  // Bands
+  for (let i=0; i<genArr.length; i++) {
+    const g = genArr[i];
+    const y = (g-1)*ROW_H - ROW_H*0.45;
+    if (y+ROW_H < _vp.yMin || y > _vp.yMax) continue;
+    if (i%2===0) { ctx.fillStyle='rgba(0,0,0,0.015)'; ctx.fillRect(xMin-100,y,(xMax-xMin)+200,ROW_H); }
+  }
+  // Gen labels
+  for (const g of genArr) {
+    const y = (g-1)*ROW_H;
+    if (y < _vp.yMin-20 || y > _vp.yMax+20) continue;
+    const lx = xMin - 40;
+    ctx.fillStyle = g%8===0 ? 'rgba(217,119,6,.18)' : 'rgba(196,181,165,.15)';
+    roundRect(ctx, lx-16, y-8, 32, 16, 8); ctx.fill();
+    ctx.fillStyle = g%8===0 ? '#b45309' : '#b0a090';
+    ctx.font = g%8===0 ? '700 9px "Noto Serif SC",serif' : '600 8px "Noto Serif SC",serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(`${g}代`, lx, y);
+  }
+  // 8-gen separators
+  for (const g of genArr) {
+    if (g%8!==0) continue;
+    const y = (g-0.5)*ROW_H;
+    if (y < _vp.yMin-30 || y > _vp.yMax+30) continue;
+    ctx.strokeStyle='rgba(217,119,6,.3)'; ctx.lineWidth=1.5;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(xMin-100,y); ctx.lineTo(xMax+100,y); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+function drawEdges() {
+  const hasPath = highlightPath && highlightPath.size > 0;
+  for (let i=0; i<edges.length; i++) {
+    const e = edges[i];
+    const eR = Math.max(e.parent.x, e.child.x) + NW;
+    const eL = Math.min(e.parent.x, e.child.x) - NW;
+    if (eR < _vp.xMin || eL > _vp.xMax || e.child.y+NH < _vp.yMin || e.parent.y-NH > _vp.yMax) continue;
+
+    const br = BR[e.child._br] || BR_DEF;
+    const onPath = hasPath && highlightPath.has(e.parent.data) && highlightPath.has(e.child.data);
+    const px=e.parent.x, py=e.parent.y+NH/2;
+    const cx=e.child.x, cy=e.child.y-NH/2;
+    const midY=(py+cy)/2;
+
+    ctx.save();
+    ctx.globalAlpha = hasPath ? (onPath ? 1 : 0.15) : 1;
+    ctx.strokeStyle = onPath ? br.pathLine : br.line;
+    ctx.lineWidth = onPath ? 2.5 : 1;
+    ctx.lineJoin='round'; ctx.lineCap='round';
+    if (e.child.data.generationGap) ctx.setLineDash([5,4]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,midY); ctx.lineTo(cx,midY); ctx.lineTo(cx,cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (onPath && cam.scale > 0.1) {
+      // Arrow indicator on path
+      ctx.fillStyle = br.pathLine;
+      ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function drawNodes() {
+  const detail = cam.scale > 0.3 ? 2 : cam.scale > 0.1 ? 1 : 0;
+  const hasPath = highlightPath && highlightPath.size > 0;
+
+  for (const n of nodes) {
+    if (n.x+NW < _vp.xMin || n.x-NW > _vp.xMax || n.y+NH < _vp.yMin || n.y-NH > _vp.yMax) continue;
+    const isSel = selected && selected.data === n.data;
+    const onPath = hasPath && highlightPath.has(n.data);
+    const isRoot = !n.parent;
+    const leaf = !n.data.children || !n.data.children.length;
+    const hasKids = !leaf;
+    const br = BR[n._br] || BR_DEF;
+    const w = NW, h = NH;
+    const x = n.x-w/2, y = n.y-h/2;
+
+    ctx.save();
+    ctx.globalAlpha = hasPath ? (onPath ? 1 : 0.12) : 1;
+
+    // === Level 0: Tiny blocks ===
+    if (detail === 0) {
+      ctx.fillStyle = isSel ? '#fbbf24' : (onPath ? br.accent : br.stroke);
+      ctx.fillRect(x+2, y+2, w-4, h-4);
+      ctx.restore(); continue;
+    }
+
+    // Shadow for selected
+    if (isSel) { ctx.shadowColor='rgba(217,119,6,.35)'; ctx.shadowBlur=14; }
+    else if (onPath && hasPath) { ctx.shadowColor='rgba(0,0,0,.12)'; ctx.shadowBlur=8; }
+
+    // Fill
+    roundRect(ctx, x, y, w, h, 6);
+    ctx.fillStyle = isSel ? '#fffbeb' : (isRoot ? '#fffdf7' : br.fill);
+    ctx.fill();
+    ctx.shadowColor='transparent'; ctx.shadowBlur=0;
+
+    // Stacked cards for collapsed
+    if (n._collapsed && hasKids) {
+      ctx.save(); ctx.globalAlpha *= 0.25;
+      roundRect(ctx, x+2, y+2, w, h, 6); ctx.fillStyle=br.fill; ctx.fill();
+      ctx.restore();
+    }
+
+    // Border
+    roundRect(ctx, x, y, w, h, 6);
+    if (isSel) { ctx.strokeStyle='#d97706'; ctx.lineWidth=2.5; }
+    else if (onPath) { ctx.strokeStyle=br.accent; ctx.lineWidth=1.8; }
+    else if (isRoot) { ctx.strokeStyle='#d97706'; ctx.lineWidth=1.8; }
+    else { ctx.strokeStyle=br.stroke; ctx.lineWidth=.8; }
+    if (leaf && !isSel && !onPath) ctx.setLineDash([3,2]);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Top accent strip
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(x+6,y); ctx.lineTo(x+w-6,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+2.5); ctx.lineTo(x,y+2.5);
+    ctx.quadraticCurveTo(x,y,x+6,y); ctx.closePath(); ctx.clip();
+    ctx.fillStyle = isRoot ? '#d97706' : br.accent;
+    ctx.globalAlpha = (onPath || isSel) ? 0.9 : 0.4;
+    ctx.fillRect(x,y,w,2.5);
+    ctx.restore();
+
+    // Left bar
+    ctx.globalAlpha = hasPath ? (onPath ? 1 : 0.12) : 1;
+    roundRect(ctx, x, y+4, 3, h-8, 1.5);
+    ctx.fillStyle = isRoot ? '#d97706' : br.accent; ctx.fill();
+
+    // Name
+    ctx.fillStyle = isSel ? '#451a03' : (onPath ? br.accent : br.text);
+    ctx.font = `700 ${detail>=2?11:10}px "Noto Serif SC",serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const nameY = (n.data.spouse && detail>=2) ? n.y-3 : n.y+1;
+    ctx.fillText(truncate(n.data.name, 5), n.x, nameY);
+
+    if (detail >= 2) {
+      // Spouse
+      if (n.data.spouse) {
+        ctx.fillStyle='#78716c'; ctx.font='400 7px "Noto Serif SC",serif';
+        ctx.fillText('配 '+truncate(n.data.spouse,5), n.x, nameY+12);
+      }
+      // Gen badge
+      const bt = `${n.data.generation}代`;
+      ctx.font='600 6px "Inter",sans-serif';
+      const btw = ctx.measureText(bt).width+6;
+      const bx=x+w-btw-3, by=y+3;
+      ctx.fillStyle=`${br.accent}18`; roundRect(ctx,bx,by,btw,11,3); ctx.fill();
+      ctx.fillStyle=br.accent; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(bt, bx+btw/2, by+5.5);
+      // Branch label
+      if (n.data.branch && n.data.generation<=2) {
+        ctx.fillStyle=br.accent; ctx.font='600 7px "Noto Serif SC",serif';
+        ctx.textAlign='left'; ctx.fillText(n.data.branch, x+7, y+h-6);
+      }
+    }
+
+    // Collapsed count
+    if (n._collapsed && hasKids && detail>=1) {
+      const desc = countDesc(n.data);
+      const ct = `+${desc}`;
+      ctx.font='700 8px "Inter",sans-serif';
+      const cw = ctx.measureText(ct).width+8;
+      ctx.fillStyle='rgba(217,119,6,.15)'; roundRect(ctx,n.x-cw/2,y+h,cw,13,4); ctx.fill();
+      ctx.fillStyle='#b45309'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(ct, n.x, y+h+6.5);
+    }
+
+    // Toggle button
+    if (hasKids) {
+      const tx=n.x, ty=y+h+TOGGLE_R+2;
+      ctx.beginPath(); ctx.arc(tx,ty,TOGGLE_R,0,Math.PI*2);
+      ctx.fillStyle = n._collapsed ? 'rgba(217,119,6,.15)' : 'rgba(0,0,0,.04)'; ctx.fill();
+      ctx.strokeStyle = n._collapsed ? '#d97706' : '#c4b5a5'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(tx,ty,TOGGLE_R,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle = n._collapsed ? '#b45309' : '#a8a29e';
+      ctx.font='500 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(n._collapsed ? '▸' : '▾', tx, ty);
+    }
+
+    ctx.restore();
+  }
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function truncate(s,m){return s&&s.length>m?s.slice(0,m)+'…':(s||'')}
+
+// ═══════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════
+function toggleMinimap() {
+  mmVisible = !mmVisible;
+  document.getElementById('minimap').classList.toggle('visible', mmVisible);
+  document.getElementById('btnMinimap').classList.toggle('active', mmVisible);
+  if (mmVisible) drawMinimap();
+}
+
+function drawMinimap() {
+  if (!nodes.length) return;
+  const c = mmCtx;
+  c.setTransform(dpr,0,0,dpr,0,0);
+  c.clearRect(0,0,MM_W,MM_H);
+  c.fillStyle='#faf8f5'; c.fillRect(0,0,MM_W,MM_H);
+
+  const tw = _bbox.xMax-_bbox.xMin, th = _bbox.yMax-_bbox.yMin;
+  const pad = 6;
+  const s = Math.min((MM_W-pad*2)/tw, (MM_H-pad*2)/th);
+  const ox = (MM_W - tw*s)/2;
+  const oy = (MM_H - th*s)/2;
+
+  // Draw nodes as tiny dots
+  for (const n of nodes) {
+    const mx = ox + (n.x - _bbox.xMin) * s;
+    const my = oy + (n.y - _bbox.yMin) * s;
+    const br = BR[n._br] || BR_DEF;
+    const isSel = selected && selected.data === n.data;
+    c.fillStyle = isSel ? '#d97706' : br.accent;
+    c.globalAlpha = isSel ? 1 : 0.5;
+    c.fillRect(mx-1, my-1, isSel?3:2, isSel?3:2);
+  }
+  c.globalAlpha = 1;
+
+  // Draw edges as thin lines
+  c.strokeStyle = 'rgba(0,0,0,.08)'; c.lineWidth = 0.5;
+  for (const e of edges) {
+    const px = ox+(e.parent.x-_bbox.xMin)*s;
+    const py = oy+(e.parent.y-_bbox.yMin)*s;
+    const cx_ = ox+(e.child.x-_bbox.xMin)*s;
+    const cy_ = oy+(e.child.y-_bbox.yMin)*s;
+    c.beginPath(); c.moveTo(px,py); c.lineTo(cx_,cy_); c.stroke();
+  }
+
+  // Viewport rect
+  const W = canvas.width/dpr, H = canvas.height/dpr;
+  const vpLeft = (-cam.x/cam.scale - _bbox.xMin)*s + ox;
+  const vpTop = (-cam.y/cam.scale - _bbox.yMin)*s + oy;
+  const vpW = (W/cam.scale)*s;
+  const vpH = (H/cam.scale)*s;
+  const vp = document.getElementById('mmViewport');
+  vp.style.left = Math.max(0, vpLeft)+'px';
+  vp.style.top = Math.max(0, vpTop)+'px';
+  vp.style.width = Math.min(MM_W, vpW)+'px';
+  vp.style.height = Math.min(MM_H, vpH)+'px';
+}
+
+function setupMinimapTouch() {
+  const mm = document.getElementById('minimap');
+  let dragging = false;
+  function mmNav(ex, ey) {
+    const rect = mmCanvas.getBoundingClientRect();
+    const mx = ex - rect.left, my = ey - rect.top;
+    const tw = _bbox.xMax-_bbox.xMin, th = _bbox.yMax-_bbox.yMin;
+    const pad = 6;
+    const s = Math.min((MM_W-pad*2)/tw, (MM_H-pad*2)/th);
+    const ox = (MM_W - tw*s)/2, oy = (MM_H - th*s)/2;
+    const wx = (mx - ox)/s + _bbox.xMin;
+    const wy = (my - oy)/s + _bbox.yMin;
+    const W = canvas.width/dpr, H = canvas.height/dpr;
+    cam.x = W/2 - wx*cam.scale;
+    cam.y = H/2 - wy*cam.scale;
+    draw();
+  }
+  mm.addEventListener('touchstart', e => { e.stopPropagation(); dragging=true; const t=e.touches[0]; mmNav(t.clientX,t.clientY); }, {passive:false});
+  mm.addEventListener('touchmove', e => { e.stopPropagation(); e.preventDefault(); if(dragging){const t=e.touches[0]; mmNav(t.clientX,t.clientY);} }, {passive:false});
+  mm.addEventListener('touchend', e => { e.stopPropagation(); dragging=false; }, {passive:false});
+  mm.addEventListener('mousedown', e => { dragging=true; mmNav(e.clientX,e.clientY); });
+  mm.addEventListener('mousemove', e => { if(dragging) mmNav(e.clientX,e.clientY); });
+  mm.addEventListener('mouseup', () => { dragging=false; });
+}
+
+// ═══════════════════════════════════════
+// TOUCH
+// ═══════════════════════════════════════
+function screenToWorld(sx,sy){return{x:(sx-cam.x)/cam.scale,y:(sy-cam.y)/cam.scale}}
+function hitTest(wx,wy){
+  for(let i=nodes.length-1;i>=0;i--){
+    const n=nodes[i];
+    if(wx>=n.x-NW/2&&wx<=n.x+NW/2&&wy>=n.y-NH/2&&wy<=n.y+NH/2) return n;
+  }
+  return null;
+}
+function hitToggle(wx,wy){
+  const R=TOGGLE_R+8;
+  for(let i=nodes.length-1;i>=0;i--){
+    const n=nodes[i];
+    if(!n.data.children||!n.data.children.length) continue;
+    const tx=n.x, ty=n.y+NH/2+TOGGLE_R+2;
+    if((wx-tx)**2+(wy-ty)**2 <= R*R) return n;
+  }
+  return null;
+}
+function getTouchPos(t){const r=canvas.getBoundingClientRect();return{x:t.clientX-r.left,y:t.clientY-r.top}}
+
+function onTouchStart(e){
+  e.preventDefault(); _isTouching=true;
+  if(e.touches.length===1){
+    const p=getTouchPos(e.touches[0]);
+    const w=screenToWorld(p.x,p.y);
+    _tapStart={pos:p,world:w,time:Date.now(),moved:false};
+    _touchDrag={sx:p.x,sy:p.y,cx:cam.x,cy:cam.y};
+    clearTimeout(_longPress);
+    _longPress=setTimeout(()=>{
+      if(_tapStart&&!_tapStart.moved){
+        const hit=hitTest(_tapStart.world.x,_tapStart.world.y);
+        if(hit){
+          if(selected&&selected.data===hit.data){deselect();draw();}
+          else {selectNode(hit);openSheet();}
+          _tapStart=null;
+        }
+      }
+    },450);
+  }
+  if(e.touches.length===2){
+    clearTimeout(_longPress);_tapStart=null;
+    const p1=getTouchPos(e.touches[0]),p2=getTouchPos(e.touches[1]);
+    _pinch={dist:Math.hypot(p2.x-p1.x,p2.y-p1.y),cx:(p1.x+p2.x)/2,cy:(p1.y+p2.y)/2,startScale:cam.scale,startX:cam.x,startY:cam.y};
+    _touchDrag=null;
+  }
+}
+function onTouchMove(e){
+  e.preventDefault();
+  if(e.touches.length===1&&_touchDrag){
+    const p=getTouchPos(e.touches[0]);
+    const dx=p.x-_touchDrag.sx,dy=p.y-_touchDrag.sy;
+    if(Math.abs(dx)>4||Math.abs(dy)>4){if(_tapStart)_tapStart.moved=true;clearTimeout(_longPress)}
+    cam.x=_touchDrag.cx+dx; cam.y=_touchDrag.cy+dy; draw();
+  }
+  if(e.touches.length===2&&_pinch){
+    const p1=getTouchPos(e.touches[0]),p2=getTouchPos(e.touches[1]);
+    const dist=Math.hypot(p2.x-p1.x,p2.y-p1.y);
+    const cx=(p1.x+p2.x)/2,cy=(p1.y+p2.y)/2;
+    const ratio=dist/_pinch.dist;
+    const ns=Math.max(.02,Math.min(5,_pinch.startScale*ratio));
+    const sr=ns/_pinch.startScale;
+    cam.x=cx-((_pinch.cx-_pinch.startX)*sr);
+    cam.y=cy-((_pinch.cy-_pinch.startY)*sr);
+    cam.scale=ns; draw();
+  }
+}
+function onTouchEnd(e){
+  e.preventDefault(); clearTimeout(_longPress);
+  if(_tapStart&&!_tapStart.moved&&(Date.now()-_tapStart.time<350)){
+    const w=_tapStart.world;
+    const tog=hitToggle(w.x,w.y);
+    if(tog){toggleCollapse(tog)}
+    else{
+      const hit=hitTest(w.x,w.y);
+      if(hit){
+        const sameSelected = selected&&selected.data===hit.data;
+        if(sameSelected){
+          deselect();
+          if(_tapTimer){clearTimeout(_tapTimer);_tapTimer=null;}
+        }else{
+          selectNode(hit); draw();
+          if(_tapTimer){clearTimeout(_tapTimer);_tapTimer=null;openSheet()}
+          else _tapTimer=setTimeout(()=>{_tapTimer=null},280);
+        }
+      } else deselect();
+    }
+  }
+  _tapStart=null;_touchDrag=null;_pinch=null;
+  if(e.touches.length===0)_isTouching=false;
+}
+
+// Mouse fallback
+let _mDrag=null;
+function onMouseDown(e){
+  if(_isTouching)return;
+  e.preventDefault();
+  const r=canvas.getBoundingClientRect();
+  const sx=e.clientX-r.left,sy=e.clientY-r.top;
+  const w=screenToWorld(sx,sy);
+  _mDrag={sx:e.clientX,sy:e.clientY,cx:cam.x,cy:cam.y,wx:w.x,wy:w.y,moved:false};
+}
+function onMouseMove(e){
+  if(!_mDrag)return;
+  const dx=e.clientX-_mDrag.sx, dy=e.clientY-_mDrag.sy;
+  if(Math.abs(dx)>3||Math.abs(dy)>3)_mDrag.moved=true;
+  if(_mDrag.moved){
+    cam.x=_mDrag.cx+dx;
+    cam.y=_mDrag.cy+dy;
+    draw();
+  }
+}
+function onMouseUp(){
+  if(!_mDrag)return;
+  const m=_mDrag;
+  _mDrag=null;
+  if(m.moved)return;
+  const tog=hitToggle(m.wx,m.wy);
+  if(tog){toggleCollapse(tog);return}
+  const hit=hitTest(m.wx,m.wy);
+  if(!hit){deselect();return}
+  if(selected&&selected.data===hit.data){
+    deselect();
+    return;
+  }
+  selectNode(hit);draw();
+}
+
+function onCanvasDblClick(e){
+  if(_isTouching)return;
+  const r=canvas.getBoundingClientRect();
+  const sx=e.clientX-r.left,sy=e.clientY-r.top;
+  const w=screenToWorld(sx,sy);
+  const hit=hitTest(w.x,w.y);
+  if(!hit)return;
+  selectNode(hit);
+  draw();
+  openSheet();
+}
+function onWheel(e){
+  e.preventDefault();
+  const r=canvas.getBoundingClientRect();
+  const sx=e.clientX-r.left,sy=e.clientY-r.top;
+  const d=e.deltaY>0?.9:1.1;
+  const ns=Math.max(.02,Math.min(5,cam.scale*d));
+  const rt=ns/cam.scale;
+  cam.x=sx-(sx-cam.x)*rt; cam.y=sy-(sy-cam.y)*rt;
+  cam.scale=ns; draw();
+}
+
+// ═══════════════════════════════════════
+// ZOOM
+// ═══════════════════════════════════════
+function zoomIn(){zoomBy(1.5)}
+function zoomOut(){zoomBy(.65)}
+function zoomBy(f){
+  const W=canvas.width/dpr/2,H=canvas.height/dpr/2;
+  const ns=Math.max(.02,Math.min(5,cam.scale*f));
+  const r=ns/cam.scale;
+  cam.x=W-(W-cam.x)*r; cam.y=H-(H-cam.y)*r;
+  cam.scale=ns; draw();
+}
+function zoomFit(){
+  if(!nodes.length)return;
+  const W=canvas.width/dpr,H=canvas.height/dpr;
+  const tw=_bbox.xMax-_bbox.xMin, th=_bbox.yMax-_bbox.yMin;
+  const pad=30;
+  cam.scale=Math.min((W-pad*2)/tw,(H-pad*2)/th,2);
+  cam.x=W/2-(_bbox.xMin+tw/2)*cam.scale;
+  cam.y=pad-_bbox.yMin*cam.scale+15;
+  draw();
+}
+function zoomToNode(n){
+  const W=canvas.width/dpr,H=canvas.height/dpr;
+  cam.scale=Math.max(cam.scale,.85);
+  cam.x=W/2-n.x*cam.scale;
+  cam.y=H*.3-n.y*cam.scale;
+  draw();
+}
+function updateZoomPct(){document.getElementById('zoomPct').textContent=Math.round(cam.scale*100)+'%'}
+
+function isDesktopView(){return window.innerWidth>=DESKTOP_BP}
+
+function onGlobalKeydown(e){
+  const activeEl = document.activeElement;
+  const isTyping = activeEl && (activeEl.tagName==='INPUT' || activeEl.tagName==='TEXTAREA' || activeEl.isContentEditable);
+
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+    e.preventDefault();
+    openSearch();
+    return;
+  }
+
+  if (e.key === 'Escape') {
+    if (document.getElementById('searchOverlay').classList.contains('visible')) { closeSearch(); return; }
+    if (document.getElementById('menuSheet').classList.contains('open')) { closeMenuSafe(); return; }
+    if (document.getElementById('editorSheet').classList.contains('open')) { closeSheet(); return; }
+    if (selected) { deselect(); return; }
+  }
+
+  if (isTyping) return;
+  if (currentView !== 'tree') return;
+
+  if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomIn(); return; }
+  if (e.key === '-' || e.key === '_') { e.preventDefault(); zoomOut(); return; }
+  if (e.key === 'Enter' && selected) { e.preventDefault(); openSheet(); return; }
+  if (e.key === '0') { e.preventDefault(); zoomFit(); }
+}
+
+// ═══════════════════════════════════════
+// COLLAPSE / FOCUS
+// ═══════════════════════════════════════
+function toggleCollapse(n){
+  n._collapsed=!n._collapsed; n.data._collapsed=n._collapsed;
+  rebuild();
+  const up=nodes.find(nd=>nd.data===n.data);
+  if(up)zoomToNode(up);
+  updateStats();
+}
+
+function smartCollapse(){
+  smartCollapseInternal(8);
+  rebuild(); zoomFit(); updateStats();
+  _treeDepth = _detectDepth(); syncDepthUI();
+  toast('已按8代智能折叠','success');
+}
+function smartCollapseInternal(tier){
+  (function walk(d){
+    if(d.generation && d.generation>=tier && d.children && d.children.length) d._collapsed=true;
+    else delete d._collapsed;
+    if(d.children) d.children.forEach(walk);
+  })(DATA.tree);
+}
+let _treeDepth = null; // current depth for tree toolbar, null = all
+
+function expandAll(){
+  (function walk(d){delete d._collapsed;if(d.children)d.children.forEach(walk)})(DATA.tree);
+  rebuild(); zoomFit(); updateStats();
+  _treeDepth = null;
+  syncDepthUI();
+  toast('已全部展开','success');
+}
+
+// ── Shared depth-expand helper ──
+function _applyDepth(depth){
+  const mg = getMaxGen(DATA.tree);
+  if(depth >= mg) depth = null;
+  if(depth === null){
+    (function walk(d){delete d._collapsed;if(d.children)d.children.forEach(walk)})(DATA.tree);
+  } else {
+    (function walk(d){
+      if(!d.children||!d.children.length) return;
+      if((d.generation||1) < depth) delete d._collapsed;
+      else d._collapsed = true;
+      d.children.forEach(walk);
+    })(DATA.tree);
+  }
+  return depth;
+}
+function _detectDepth(){
+  const mg = getMaxGen(DATA.tree);
+  let d = mg;
+  (function walk(n){
+    if(n._collapsed && (n.generation||1) < d) d = n.generation||1;
+    if(n.children) n.children.forEach(walk);
+  })(DATA.tree);
+  return d >= mg ? null : d;
+}
+function _depthLabel(d){ return d === null ? '全' : d; }
+
+// ── Tree view toolbar ──
+function treeExpandAll(){
+  (function walk(d){delete d._collapsed;if(d.children)d.children.forEach(walk)})(DATA.tree);
+  _treeDepth = null;
+  rebuild(); zoomFit(); updateStats(); syncDepthUI();
+  toast('已全部展开','success');
+}
+function treeCollapseAll(){
+  (function walk(d){
+    if(d.children&&d.children.length) d._collapsed=true;
+    if(d.children)d.children.forEach(walk);
+  })(DATA.tree);
+  delete DATA.tree._collapsed;
+  _treeDepth = 1;
+  rebuild(); zoomFit(); updateStats(); syncDepthUI();
+  toast('已全部折叠','success');
+}
+function treeStepDepth(delta){
+  const mg = getMaxGen(DATA.tree);
+  let cur = _treeDepth === null ? mg : _treeDepth;
+  cur = Math.max(1, Math.min(mg, cur + delta));
+  _treeDepth = _applyDepth(cur);
+  rebuild(); zoomFit(); updateStats(); syncDepthUI();
+}
+function syncDepthUI(){
+  const mg = getMaxGen(DATA.tree);
+  if(_treeDepth === undefined) _treeDepth = _detectDepth();
+  document.getElementById('treeDepthVal').textContent = _depthLabel(_treeDepth);
+  document.getElementById('treeDepthMinus').disabled = (_treeDepth !== null && _treeDepth <= 1);
+  document.getElementById('treeDepthPlus').disabled = (_treeDepth === null);
+}
+
+// ── Outline toolbar ──
+let _olDepth = null;
+
+function olExpandAll(){
+  (function walk(d){delete d._collapsed;if(d.children)d.children.forEach(walk)})(DATA.tree);
+  _olDepth = null;
+  rebuild(); buildOutline(true); updateStats(); syncOlDepthUI();
+  toast('大纲已全部展开','success');
+}
+function olCollapseAll(){
+  (function walk(d){
+    if(d.children&&d.children.length) d._collapsed=true;
+    if(d.children)d.children.forEach(walk);
+  })(DATA.tree);
+  delete DATA.tree._collapsed;
+  _olDepth = 1;
+  rebuild(); buildOutline(true); updateStats(); syncOlDepthUI();
+  toast('大纲已全部折叠','success');
+}
+function olStepDepth(delta){
+  const mg = getMaxGen(DATA.tree);
+  let cur = _olDepth === null ? mg : _olDepth;
+  cur = Math.max(1, Math.min(mg, cur + delta));
+  _olDepth = _applyDepth(cur);
+  rebuild(); buildOutline(true); updateStats(); syncOlDepthUI();
+}
+function syncOlDepthUI(){
+  if(_olDepth === undefined) _olDepth = _detectDepth();
+  document.getElementById('olDepthVal').textContent = _depthLabel(_olDepth);
+  document.getElementById('olDepthMinus').disabled = (_olDepth !== null && _olDepth <= 1);
+  document.getElementById('olDepthPlus').disabled = (_olDepth === null);
+}
+function updateOlDepthSlider(){
+  _olDepth = _detectDepth();
+  syncOlDepthUI();
+}
+
+// Focus mode: isolate a subtree
+function toggleFocusMode() {
+  if (focusRoot) { exitFocus(); return; }
+  if (!selected) { toast('请先选择一个节点','warning'); return; }
+  enterFocus(selected.data);
+}
+function enterFocus(dataNode) {
+  fullData = DATA;
+  focusRoot = dataNode;
+  DATA = { title: fullData.title, generationRange: fullData.generationRange, notes: fullData.notes, tree: dataNode };
+  selected = null; highlightPath = null;
+  rebuildAllDataIndex();
+  buildLayout();
+  zoomFit();
+  updateFocusUI(true);
+  updateStats();
+  updateActionState();
+  if (currentView === 'outline') buildOutline();
+  toast(`聚焦: ${dataNode.name} 的子树`, 'success');
+}
+function exitFocus() {
+  if (!fullData) return;
+  DATA = fullData;
+  fullData = null;
+  focusRoot = null;
+  selected = null; highlightPath = null;
+  rebuildAllDataIndex();
+  buildLayout();
+  zoomFit();
+  updateFocusUI(false);
+  updateStats();
+  updateActionState();
+  if (currentView === 'outline') buildOutline();
+  toast('已返回全图','success');
+}
+function updateFocusUI(active) {
+  document.getElementById('focusBar').classList.toggle('visible', active);
+  document.getElementById('btnFocus').classList.toggle('focus-active', active);
+  document.getElementById('focusBarText').textContent = active ? `聚焦: ${focusRoot.name} 及其后代` : '';
+  // Adjust canvas top
+  document.getElementById('canvasWrap').classList.toggle('has-focus', active);
+  const tt = document.getElementById('treeToolbar');
+  if (isDesktopView()) {
+    document.getElementById('outlineContainer').style.top = active ? '120px' : '87px';
+    tt.style.top = active ? '128px' : '95px';
+  } else {
+    document.getElementById('outlineContainer').style.top = active
+      ? 'calc(var(--safe-top) + var(--topbar-h) + 33px + 33px)'
+      : 'calc(var(--safe-top) + var(--topbar-h) + 33px)';
+    tt.style.top = active
+      ? 'calc(var(--safe-top) + var(--topbar-h) + 33px + 33px + 8px)'
+      : 'calc(var(--safe-top) + var(--topbar-h) + 33px + 8px)';
+  }
+  setTimeout(()=>{resizeCanvas();draw()},50);
+}
+
+// ═══════════════════════════════════════
+// SELECTION
+// ═══════════════════════════════════════
+function selectNode(n) {
+  selected = n;
+  updateHighlightPath();
+  updateQuickNav();
+  updateActionState();
+  updateStats();
+  document.getElementById('eName').value = n.data.name||'';
+  document.getElementById('eGen').value = n.data.generation||'';
+  document.getElementById('eBranch').value = n.data.branch || n._br||'';
+  document.getElementById('eSpouse').value = n.data.spouse||'';
+  document.getElementById('eNote').value = n.data.note||'';
+  document.getElementById('eGap').value = n.data.generationGap||'';
+  document.getElementById('sheetTitle').textContent = n.data.name||'编辑';
+  document.getElementById('btnGraftLeaf').classList.toggle('visible', !n.data.children||!n.data.children.length);
+  buildNavChips();
+  buildPathDisplay();
+}
+
+function deselect(){
+  if(!selected)return;
+  selected=null; highlightPath=null;
+  updateActionState();
+  updateStats();
+  if(_tapTimer){clearTimeout(_tapTimer);_tapTimer=null;}
+  closeSheet();
+  document.getElementById('quickNav').classList.remove('visible');
+  document.getElementById('statsBar').classList.remove('shifted');
+  draw();
+}
+
+function openSheetForSelected(){
+  if(!selected){toast('请先点击一个节点进行选择','warning');return}
+  openSheet();
+}
+
+// ═══════════════════════════════════════
+// QUICK NAV (floating chips for relatives)
+// ═══════════════════════════════════════
+function updateQuickNav() {
+  const qn = document.getElementById('quickNav');
+  const sb = document.getElementById('statsBar');
+  if (!selected) { qn.classList.remove('visible'); sb.classList.remove('shifted'); return; }
+  qn.classList.add('visible');
+  sb.classList.add('shifted');
+  let html = '';
+  // Parent
+  if (selected.parent) {
+    html += `<button class="qn-btn parent" onclick="navToNode(this)" data-idx="${nodes.indexOf(selected.parent)}">⬆ ${truncate(selected.parent.data.name,4)}</button>`;
+  }
+  // Prev/Next sibling
+  if (selected.parent && selected.parent.children) {
+    const sibs = selected.parent.children;
+    const idx = sibs.indexOf(selected);
+    if (idx > 0) {
+      const prev = sibs[idx - 1];
+      html += `<button class="qn-btn" onclick="navToNode(this)" data-idx="${nodes.indexOf(prev)}">← ${truncate(prev.data.name,4)}</button>`;
+    }
+    if (idx < sibs.length - 1) {
+      const next = sibs[idx + 1];
+      html += `<button class="qn-btn" onclick="navToNode(this)" data-idx="${nodes.indexOf(next)}">→ ${truncate(next.data.name,4)}</button>`;
+    }
+  }
+  // Children
+  if (selected.children.length) {
+    for (const c of selected.children.slice(0, 4)) {
+      html += `<button class="qn-btn child" onclick="navToNode(this)" data-idx="${nodes.indexOf(c)}">⬇ ${truncate(c.data.name,4)}</button>`;
+    }
+    if (selected.children.length > 4) html += `<span class="qn-btn child" style="opacity:.6;cursor:default">+${selected.children.length-4}</span>`;
+  }
+  qn.innerHTML = html;
+}
+
+function navToNode(el) {
+  const idx = parseInt(el.dataset.idx);
+  if (idx >= 0 && idx < nodes.length) {
+    const target = nodes[idx];
+    selectNode(target); zoomToNode(target); draw();
+    if (currentView === 'outline') buildOutline();
+  }
+}
+
+function navTo(rel) {
+  if (!selected) return;
+  let target = null;
+  if (rel === 'parent' && selected.parent) target = selected.parent;
+  if (target) { selectNode(target); zoomToNode(target); draw(); if (currentView === 'outline') buildOutline(); }
+}
+
+// ═══════════════════════════════════════
+// NAV CHIPS (in editor sheet)
+// ═══════════════════════════════════════
+function buildNavChips() {
+  const el = document.getElementById('navChips');
+  if (!selected) { el.innerHTML = ''; return; }
+  let html = '';
+  if (selected.parent) {
+    const pi = nodes.indexOf(selected.parent);
+    html += `<button class="nav-chip gold" onclick="navToNode(this);closeSheet()" data-idx="${pi}"><span class="chip-icon">⬆</span> ${truncate(selected.parent.data.name,6)}</button>`;
+  }
+  // Focus
+  if (selected.data.children && selected.data.children.length) {
+    html += `<button class="nav-chip gold" onclick="enterFocusSelected();closeSheet()"><span class="chip-icon">🎯</span> 聚焦子树</button>`;
+  }
+  // Children
+  const kids = selected.children || [];
+  for (const c of kids.slice(0, 4)) {
+    const ci = nodes.indexOf(c);
+    html += `<button class="nav-chip" onclick="navToNode(this);closeSheet()" data-idx="${ci}"><span class="chip-icon">⬇</span> ${truncate(c.data.name,6)}</button>`;
+  }
+  if (kids.length > 4) html += `<span style="font-size:10px;color:var(--text-muted);padding:6px">+${kids.length-4}子</span>`;
+  el.innerHTML = html;
+}
+function enterFocusSelected() { if (selected) enterFocus(selected.data); }
+
+function buildPathDisplay() {
+  const el = document.getElementById('pathDisplay');
+  if (!selected) { el.innerHTML = ''; return; }
+  const path = [];
+  let cur = selected;
+  while (cur) { path.unshift(cur.data.name); cur = cur.parent; }
+  el.innerHTML = path.map((name, i) =>
+    i === path.length - 1
+      ? `<span class="pd-current">${name}</span>`
+      : `<span>${name}</span><span class="pd-arrow">›</span>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════
+// OUTLINE VIEW
+// ═══════════════════════════════════════
+function switchView(view) {
+  currentView = view;
+  document.getElementById('tabTree').classList.toggle('active', view==='tree');
+  document.getElementById('tabOutline').classList.toggle('active', view==='outline');
+  document.getElementById('canvasWrap').style.display = view==='tree' ? '' : 'none';
+  document.getElementById('outlineContainer').classList.toggle('active', view==='outline');
+  document.getElementById('floatZoom').style.display = view==='tree' ? '' : 'none';
+  document.getElementById('treeToolbar').classList.toggle('hidden', view!=='tree');
+  document.getElementById('minimap').style.display = view==='tree' && mmVisible ? '' : 'none';
+  document.getElementById('statsBar').style.display = view==='tree' ? '' : 'none';
+  document.getElementById('quickNav').style.display = view==='tree' ? '' : 'none';
+  if (view === 'outline') { updateOlDepthSlider(); buildOutline(); }
+  else { _treeDepth = _detectDepth(); syncDepthUI(); resizeCanvas(); draw(); }
+}
+
+function buildOutline(preserveScroll) {
+  const wrap = document.getElementById('outlineWrap');
+  const savedScroll = preserveScroll ? wrap.scrollTop : -1;
+  const frag = document.createDocumentFragment();
+  const pathSet = highlightPath || new Set();
+
+  function renderNode(data, depth, inheritedBranch) {
+    const br = data.branch || inheritedBranch || '';
+    const hasKids = data.children && data.children.length > 0;
+    const isCollapsed = data._collapsed;
+    const isSel = selected && selected.data === data;
+    const onPath = pathSet.has(data);
+
+    const row = document.createElement('div');
+    row.className = 'ol-node' + (isSel ? ' selected' : '') + (onPath ? ' on-path' : '');
+
+    // Indent
+    const indent = document.createElement('span');
+    indent.className = 'ol-indent';
+    indent.style.width = (depth * 18) + 'px';
+    row.appendChild(indent);
+
+    // Toggle
+    const toggle = document.createElement('span');
+    toggle.className = 'ol-toggle' + (hasKids ? ' has-children' : '');
+    toggle.textContent = hasKids ? (isCollapsed ? '▸' : '▾') : '·';
+    if (hasKids) {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        data._collapsed = !data._collapsed;
+        rebuild();
+        buildOutline(true);
+      });
+    }
+    row.appendChild(toggle);
+
+    // Body
+    const body = document.createElement('div');
+    body.className = 'ol-body';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'ol-name';
+    nameEl.textContent = data.name;
+    body.appendChild(nameEl);
+    const meta = [];
+    if (data.spouse) meta.push('配 ' + data.spouse);
+    if (data.note) meta.push(data.note);
+    if (data.generationGap) meta.push('⚠ ' + data.generationGap);
+    if (meta.length) {
+      const metaEl = document.createElement('div');
+      metaEl.className = 'ol-meta';
+      metaEl.textContent = meta.join(' · ');
+      body.appendChild(metaEl);
+    }
+    row.appendChild(body);
+
+    // Badge
+    const badge = document.createElement('span');
+    badge.className = 'ol-badge ol-branch-' + br;
+    badge.textContent = `${data.generation}代`;
+    row.appendChild(badge);
+
+    // Collapsed count
+    if (isCollapsed && hasKids) {
+      const cnt = document.createElement('span');
+      cnt.className = 'ol-count';
+      cnt.textContent = `+${countDesc(data)}`;
+      row.appendChild(cnt);
+    }
+
+    // Click to select + navigate in tree (click selected again to deselect)
+    row.addEventListener('click', () => {
+      const layoutNode = _dataToNode.get(data);
+      if (layoutNode) {
+        if (selected && selected.data === data) {
+          deselect();
+          buildOutline(true);
+          return;
+        }
+        selectNode(layoutNode);
+        // Also position camera for when user switches to tree view
+        zoomToNode(layoutNode);
+        buildOutline(true); // refresh highlight
+      }
+    });
+
+    row.addEventListener('dblclick', () => {
+      const layoutNode = _dataToNode.get(data);
+      if (layoutNode) { selectNode(layoutNode); openSheet(); }
+    });
+
+    // Double tap to open editor
+    let lastTap = 0;
+    row.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        e.preventDefault();
+        const layoutNode = _dataToNode.get(data);
+        if (layoutNode) { selectNode(layoutNode); openSheet(); }
+      }
+      lastTap = now;
+    });
+
+    frag.appendChild(row);
+
+    // Recurse children
+    if (hasKids && !isCollapsed) {
+      for (const ch of data.children) renderNode(ch, depth + 1, br);
+    }
+  }
+
+  renderNode(DATA.tree, 0, '');
+  wrap.innerHTML = '';
+  wrap.appendChild(frag);
+
+  // Restore or auto-scroll
+  if (savedScroll >= 0) {
+    wrap.scrollTop = savedScroll;
+  } else if (selected) {
+    setTimeout(() => {
+      const selRow = wrap.querySelector('.ol-node.selected');
+      if (selRow) selRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 50);
+  }
+}
+
+// ═══════════════════════════════════════
+// BOTTOM SHEET
+// ═══════════════════════════════════════
+function openSheet() {
+  if (!selected) return;
+  document.getElementById('sheetBackdrop').classList.add('visible');
+  document.getElementById('sheetBackdrop').onclick = closeSheet;
+  document.getElementById('editorSheet').classList.add('open');
+}
+function closeSheet() {
+  document.getElementById('sheetBackdrop').classList.remove('visible');
+  document.getElementById('editorSheet').classList.remove('open');
+  if (document.activeElement) document.activeElement.blur();
+}
+
+function setupSheetDrag() {
+  if (isDesktopView()) return;
+  let startY=0;
+  const h = document.getElementById('sheetHandle');
+  const s = document.getElementById('editorSheet');
+  h.addEventListener('touchstart', e=>{e.stopPropagation();startY=e.touches[0].clientY},{passive:true});
+  h.addEventListener('touchmove', e=>{
+    e.stopPropagation();
+    const dy=e.touches[0].clientY-startY;
+    if(dy>0)s.style.transform=`translateY(${dy}px)`;
+  },{passive:true});
+  h.addEventListener('touchend', e=>{
+    e.stopPropagation();
+    const dy=e.changedTouches[0].clientY-startY;
+    s.style.transform='';
+    if(dy>60)closeSheet();
+  },{passive:true});
+}
+
+// ═══════════════════════════════════════
+// MENU
+// ═══════════════════════════════════════
+function openMenu(){
+  document.getElementById('menuSheet').classList.add('open');
+  document.getElementById('sheetBackdrop').classList.add('visible');
+  document.getElementById('sheetBackdrop').onclick = closeMenuSafe;
+}
+function closeMenuSafe(){
+  document.getElementById('menuSheet').classList.remove('open');
+  document.getElementById('sheetBackdrop').classList.remove('visible');
+  document.getElementById('sheetBackdrop').onclick = closeSheet;
+}
+
+// ═══════════════════════════════════════
+// SEARCH (with ancestry path)
+// ═══════════════════════════════════════
+function openSearch(){
+  document.getElementById('searchOverlay').classList.add('visible');
+  const inp=document.getElementById('searchInput');inp.value='';inp.focus();
+  updateSearchResults('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').classList.remove('visible');
+  document.getElementById('searchInput').blur();
+}
+function onSearchInput(){updateSearchResults(document.getElementById('searchInput').value.trim())}
+
+function updateSearchResults(q) {
+  const el = document.getElementById('searchResults');
+  if (!q) { el.innerHTML = '<div class="search-empty">输入姓名搜索族谱成员</div>'; return; }
+  const ql = q.toLowerCase();
+  // Search across ALL data (including fullData if in focus mode)
+  const searchList = fullData ? [] : allDataNodes;
+  if (fullData) {
+    // Build a temporary full list
+    const tmp = [];
+    (function w(d,p){tmp.push({data:d,parentData:p});if(d.children)d.children.forEach(c=>w(c,d))})(fullData.tree,null);
+    searchList.push(...tmp);
+  }
+  const source = searchList.length ? searchList : allDataNodes;
+  const matches = [];
+  for (const {data} of source) {
+    if ((data.name && data.name.toLowerCase().includes(ql)) ||
+        (data.spouse && data.spouse.toLowerCase().includes(ql)) ||
+        (data.branch && data.branch.toLowerCase().includes(ql))) {
+      matches.push(data);
+    }
+    if (matches.length >= 40) break;
+  }
+  if (!matches.length) { el.innerHTML = '<div class="search-empty">未找到匹配的成员</div>'; return; }
+
+  let html = '';
+  for (const d of matches) {
+    // Build path
+    const src = fullData ? source : allDataNodes;
+    const path = [];
+    let cur = d;
+    while (cur) {
+      path.unshift(cur.name);
+      const entry = src.find(e => e.data === cur);
+      cur = entry ? entry.parentData : null;
+    }
+    const pathStr = path.length > 1 ? path.slice(0, -1).join(' › ') : '';
+    const idx = matches.indexOf(d);
+    html += `<div class="sr-item" onclick="searchSelectIdx(${idx})">
+      <div style="flex:1;min-width:0">
+        <div class="sr-name">${d.name}</div>
+        <div class="sr-path">${pathStr || '始祖'}</div>
+      </div>
+      <span class="sr-badge">${d.generation}代</span>
+    </div>`;
+  }
+  el.innerHTML = html;
+  // Store matches for click
+  el._matches = matches;
+}
+
+function searchSelectIdx(idx) {
+  const el = document.getElementById('searchResults');
+  const d = el._matches && el._matches[idx];
+  if (!d) return;
+  closeSearch();
+  // Exit focus if in focus mode so we can navigate full tree
+  if (focusRoot) exitFocus();
+  // Expand path to node
+  expandPathTo(DATA.tree, d);
+  rebuild();
+  const node = nodes.find(n => n.data === d);
+  if (node) {
+    selectNode(node); zoomToNode(node); draw();
+    if (currentView === 'outline') buildOutline();
+  } else {
+    // Fallback: match by name+gen
+    const fallback = nodes.find(n => n.data.name===d.name && n.data.generation===d.generation);
+    if (fallback) { selectNode(fallback); zoomToNode(fallback); draw(); if (currentView === 'outline') buildOutline(); }
+    else toast('未找到节点','warning');
+  }
+}
+
+function expandPathTo(root, targetData) {
+  // Expand all ancestors from root to targetData
+  function walk(d) {
+    if (d === targetData) return true;
+    if (d.children) {
+      for (const c of d.children) {
+        if (walk(c)) { delete d._collapsed; return true; }
+      }
+    }
+    return false;
+  }
+  walk(root);
+}
+
+// ═══════════════════════════════════════
+// EDIT ACTIONS
+// ═══════════════════════════════════════
+function saveNode(){
+  if(!selected)return;
+  const name=document.getElementById('eName').value.trim();
+  const gen=parseInt(document.getElementById('eGen').value);
+  if(!name)return toast('姓名不能为空','error');
+  if(!gen||gen<1)return toast('世代必须≥1','error');
+  selected.data.name=name; selected.data.generation=gen;
+  setOrDel(selected.data,'branch',document.getElementById('eBranch').value.trim());
+  setOrDel(selected.data,'spouse',document.getElementById('eSpouse').value.trim());
+  setOrDel(selected.data,'note',document.getElementById('eNote').value.trim());
+  setOrDel(selected.data,'generationGap',document.getElementById('eGap').value.trim());
+  document.getElementById('sheetTitle').textContent=name;
+  rebuildAllDataIndex(); rebuild();
+  if(currentView==='outline')buildOutline();
+  toast('已保存','success');
+}
+function setOrDel(o,k,v){if(v)o[k]=v;else delete o[k]}
+
+function addChild(){
+  if(!selected)return;
+  if(!selected.data.children)selected.data.children=[];
+  const nc={name:'新成员',generation:(selected.data.generation||0)+1};
+  selected.data.children.push(nc);
+  selected._collapsed=false;delete selected.data._collapsed;
+  rebuildAllDataIndex();rebuild();updateStats();
+  const nn=nodes.find(n=>n.data===nc);
+  if(nn){selectNode(nn);zoomToNode(nn);draw()}
+  if(currentView==='outline')buildOutline();
+  toast('已添加子嗣','success');
+}
+
+function deleteNode(){
+  if(!selected)return;
+  if(!selected.parent)return toast('不能删除始祖','error');
+  showConfirm(`确定删除「${selected.data.name}」及其所有后代？`,()=>{
+    const pc=selected.parent.data.children;
+    pc.splice(pc.indexOf(selected.data),1);
+    if(!pc.length)delete selected.parent.data.children;
+    deselect();
+    rebuildAllDataIndex();rebuild();updateStats();
+    if(currentView==='outline')buildOutline();
+    toast('已删除','success');
+  });
+}
+
+function rebuild(){
+  const oc={...cam};buildLayout();cam=oc;draw();
+}
+
+// ═══════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════
+function updateStats(){
+  const totalInFullTree = fullData ? countAllNodes(fullData.tree) : countAllNodes(DATA.tree);
+  document.getElementById('statNodes').textContent = focusRoot ? `${nodes.length}/${totalInFullTree}人` : `${nodes.length}人`;
+  document.getElementById('statGens').textContent = `${maxGen}代`;
+  document.getElementById('statSel').textContent = selected ? `已选: ${truncate(selected.data.name,6)}` : '未选中';
+}
+function updateHeader(){
+  document.getElementById('hTitle').textContent=DATA.title||'族谱';
+  document.getElementById('hBadge').textContent=DATA.generationRange||'';
+}
+
+function updateActionState(){
+  const btnEdit = document.getElementById('btnEdit');
+  const btnFocus = document.getElementById('btnFocus');
+  const canEdit = !!selected;
+  const canFocus = !!selected || !!focusRoot;
+  btnEdit.disabled = !canEdit;
+  btnFocus.disabled = !canFocus;
+}
+
+function setupUXTip(){
+  try{
+    const seen = localStorage.getItem('familyTreeUXTipSeen') === '1';
+    if(!seen){
+      const tip = document.getElementById('uxTip');
+      tip.classList.remove('hidden');
+      setTimeout(()=>closeUxTip(true),9000);
+      localStorage.setItem('familyTreeUXTipSeen','1');
+    }
+  }catch{
+    const tip = document.getElementById('uxTip');
+    tip.classList.remove('hidden');
+    setTimeout(()=>closeUxTip(true),9000);
+  }
+}
+
+function closeUxTip(silent=false){
+  document.getElementById('uxTip').classList.add('hidden');
+  if(!silent) toast('已隐藏操作提示','success');
+}
+
+function showHelpModal(){
+  document.getElementById('helpModal').classList.remove('hidden');
+}
+
+function closeHelpModal(){
+  document.getElementById('helpModal').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════
+// TOAST / MODAL
+// ═══════════════════════════════════════
+function toast(msg,type='success'){
+  const icons={success:'✓',warning:'⚠',error:'✗'};
+  const box=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className='toast toast-'+type;
+  t.innerHTML=`<span>${icons[type]||''}</span><span>${msg}</span><span class="tc" onclick="this.parentElement.remove()">×</span>`;
+  box.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},type==='error'?10000:2500);
+}
+function showConfirm(msg,onYes){
+  const m=document.getElementById('modal');
+  document.getElementById('modalMsg').textContent=msg;
+  m.classList.remove('hidden');
+  const done=()=>m.classList.add('hidden');
+  document.getElementById('modalNo').onclick=done;
+  document.getElementById('modalYes').onclick=()=>{done();onYes()};
+}
+
+// ═══════════════════════════════════════
+// EXPORT PNG
+// ═══════════════════════════════════════
+function doExportPNG(){
+  if(!nodes.length)return;
+  toast('正在生成…','success');
+  setTimeout(()=>{
+    const pad=50;
+    const xMin=_bbox.xMin,xMax=_bbox.xMax,yMin=_bbox.yMin-20,yMax=_bbox.yMax+20;
+    const tw=xMax-xMin+pad*2,th=yMax-yMin+pad*2;
+    const sc=2;
+    const oc=document.createElement('canvas');
+    oc.width=tw*sc;oc.height=th*sc;
+    const ox=oc.getContext('2d');
+    ox.fillStyle='#f5f3ef';ox.fillRect(0,0,oc.width,oc.height);
+    const rCtx=ctx,rCam={...cam},rCanvas=canvas;
+    ctx=ox;canvas=oc;
+    cam={x:(-xMin+pad)*sc,y:(-yMin+pad)*sc,scale:sc};
+    ctx.setTransform(1,0,0,1,0,0);
+    const sv=_vp;_vp={xMin:-1e9,yMin:-1e9,xMax:1e9,yMax:1e9};
+    const savedHL=highlightPath;highlightPath=null;
+    ctx.save();ctx.translate(cam.x,cam.y);ctx.scale(cam.scale,cam.scale);
+    drawEdges();drawNodes();ctx.restore();
+    _vp=sv;highlightPath=savedHL;
+    ox.save();ox.fillStyle='#1c1917';
+    ox.font=`bold ${20*sc}px "Noto Serif SC",serif`;
+    ox.textAlign='center';ox.textBaseline='top';
+    ox.fillText(DATA.title||'族谱',oc.width/2,10*sc);
+    ox.restore();
+    ctx=rCtx;canvas=rCanvas;cam=rCam;
+    oc.toBlob(blob=>{
+      const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+      a.download=(DATA.title||'族谱')+'.png';a.click();
+      URL.revokeObjectURL(a.href);toast('PNG 已导出','success');
+    },'image/png');
+  },100);
+}
+
+// ═══════════════════════════════════════
+// IMPORT / GRAFT / DOWNLOAD
+// ═══════════════════════════════════════
+function doImport(){const f=document.getElementById('fImport');f.value='';f.onchange=handleImport;f.click()}
+function doGraft(){const f=document.getElementById('fGraft');f.value='';f.onchange=handleGraft;f.click()}
+function doGraftSingle(){const f=document.getElementById('fGraftOne');f.value='';f.onchange=handleGraftOne;f.click()}
+
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  readJSON(file).then(d=>{
+    if(!d.tree||!d.tree.name)throw new Error('invalid');
+    DATA=d;selected=null;highlightPath=null;focusRoot=null;fullData=null;
+    updateFocusUI(false);closeSheet();
+    rebuildAllDataIndex();
+    const total=countAllNodes(DATA.tree);
+    if(total>80)smartCollapseInternal(8);
+    buildLayout();updateHeader();updateStats();updateActionState();
+    if(currentView==='outline')buildOutline();
+    setTimeout(zoomFit,50);
+    toast(`导入成功 (${total}人)`,'success');
+  }).catch(err=>toast('JSON错误: '+err.message,'error'));
+}
+
+async function handleGraft(e){
+  const files=[...e.target.files];if(!files.length)return;
+  let ok=0;
+  for(const f of files){
+    try{
+      const d=await readJSON(f);
+      const r=d.tree||d;
+      if(!r.name||r.generation==null){if(ok)rebuild();toast(`嫁接失败: ${f.name}`,'error');return}
+      if(graft(r))ok++;
+      else{if(ok)rebuild();toast(`未找到: ${r.name} (${r.generation}代)`,'warning');return}
+    }catch{if(ok)rebuild();toast(`嫁接失败: ${f.name}`,'error');return}
+  }
+  if(ok){rebuildAllDataIndex();rebuild();updateStats();if(currentView==='outline')buildOutline()}
+  toast(`嫁接 ${ok}/${files.length} 成功`,'success');
+}
+
+function handleGraftOne(e){
+  const file=e.target.files[0];if(!file)return;
+  readJSON(file).then(d=>{
+    const r=d.tree||d;
+    if(!r.name||r.generation==null)throw new Error('invalid');
+    if(graft(r)){rebuildAllDataIndex();rebuild();updateStats();if(currentView==='outline')buildOutline();toast(`已展开「${r.name}」`,'success')}
+    else toast(`未找到: ${r.name} (${r.generation}代)`,'warning');
+  }).catch(err=>toast('错误: '+err.message,'error'));
+}
+
+function graft(sub){
+  const target = focusRoot ? (fullData ? fullData.tree : DATA.tree) : DATA.tree;
+  const leaf=findLeaf(target,sub.name,sub.generation);if(!leaf)return false;
+  if(sub.children&&sub.children.length)leaf.children=sub.children;
+  for(const k of['spouse','note','generationGap','branch'])if(sub[k]&&!leaf[k])leaf[k]=sub[k];
+  return true;
+}
+function findLeaf(n,name,gen){
+  if(n.name===name&&n.generation===gen&&(!n.children||!n.children.length))return n;
+  if(n.children)for(const c of n.children){const f=findLeaf(c,name,gen);if(f)return f}
+  return null;
+}
+function readJSON(f){return new Promise((r,j)=>{const rd=new FileReader();rd.onload=e=>{try{r(JSON.parse(e.target.result))}catch(err){j(err)}};rd.onerror=j;rd.readAsText(f)})}
+
+function doDownload(){
+  const out=structuredClone(focusRoot?fullData||DATA:DATA);
+  (function clean(n){delete n._br;delete n._collapsed;(n.children||[]).forEach(clean)})(out.tree);
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=(out.title||'族谱')+'.json';a.click();URL.revokeObjectURL(a.href);
+  toast('已下载','success');
+}
+
+// ═══════════════════════════════════════
+// EXPORT SUBTREES
+// ═══════════════════════════════════════
+function showExportSubtreesModal(){
+  document.getElementById('tierSizeInput').value='8';
+  document.getElementById('tierModal').classList.remove('hidden');
+  updateTierPreview();
+  document.getElementById('tierSizeInput').oninput=updateTierPreview;
+}
+function closeTierModal(){document.getElementById('tierModal').classList.add('hidden')}
+
+function updateTierPreview(){
+  const ts=parseInt(document.getElementById('tierSizeInput').value)||8;
+  const files=buildSubtreeFileList(ts);
+  const mg=getMaxGen(DATA.tree);
+  let h=`<div><b>最深:</b> ${mg}代 · <b>文件:</b> ${files.length}个</div><div style="margin-top:3px">`;
+  for(const f of files)h+=`<div style="padding:1px 0;font-size:10px">📄 ${f.filename}</div>`;
+  h+='</div>';
+  document.getElementById('tierPreview').innerHTML=h;
+}
+function getMaxGen(n){let m=n.generation||1;if(n.children)for(const c of n.children){const cm=getMaxGen(c);if(cm>m)m=cm}return m}
+function getIBranch(n,p){return n.branch||p||''}
+function clonePruned(n,cut,ib){
+  const cl={};for(const k of Object.keys(n)){if(k==='children'||k==='_br'||k==='_collapsed')continue;cl[k]=n[k]}
+  if(n.generation>=cut)return cl;
+  if(n.children&&n.children.length)cl.children=n.children.map(c=>clonePruned(c,cut,getIBranch(c,ib)));
+  return cl;
+}
+function collectRoots(n,tg,ib){
+  const br=getIBranch(n,ib);const res=[];
+  if(n.generation===tg&&n.children&&n.children.length){res.push({node:n,branch:br});return res}
+  if(n.children)for(const c of n.children)res.push(...collectRoots(c,tg,br));
+  return res;
+}
+function padG(g){return String(g).padStart(2,'0')}
+function buildSubtreeFileList(ts){
+  const files=[];const src=focusRoot?fullData||DATA:DATA;
+  const mg=getMaxGen(src.tree); const rg=src.tree.generation||1;const bt=src.title||'族谱';
+  function cln(n){delete n._br;delete n._collapsed;if(n.children)n.children.forEach(cln);return n}
+  const fb=rg-1+ts;
+  const mc=cln(clonePruned(src.tree,fb,''));const mam=getMaxGen(mc);
+  files.push({filename:`${bt}_${padG(rg)}-${padG(mam)}代.json`,data:{title:bt,generationRange:`${rg}—${mam}代`,notes:src.notes||[],tree:mc}});
+  let b=fb;
+  while(b<=mg){
+    const nb=b+ts;const roots=collectRoots(src.tree,b,'');
+    for(const{node,branch}of roots){
+      const sc=cln(clonePruned(node,nb,branch));const am=getMaxGen(sc);const bp=branch?`_${branch}`:'';
+      files.push({filename:`${node.name}${bp}_${padG(b)}-${padG(am)}代.json`,data:{title:branch?`${branch}—${node.name}`:node.name,generationRange:`${b}—${am}代`,notes:[],tree:sc}});
+    }
+    b=nb;
+  }
+  const nc={};for(const f of files){if(nc[f.filename]){nc[f.filename]++;const e=f.filename.lastIndexOf('.json');f.filename=f.filename.slice(0,e)+`_${nc[f.filename]}`+'.json'}else nc[f.filename]=1}
+  return files;
+}
+function doExportSubtrees(){
+  const ts=parseInt(document.getElementById('tierSizeInput').value);
+  if(!ts||ts<2)return toast('每层世代数必须≥2','error');
+  closeTierModal();const files=buildSubtreeFileList(ts);
+  if(!files.length)return toast('没有数据','warning');
+  toast(`正在导出 ${files.length} 个文件…`,'success');
+  dlSeq(files,0);
+}
+function dlSeq(files,i){
+  if(i>=files.length){toast(`已导出 ${files.length} 个文件`,'success');return}
+  const f=files[i];const blob=new Blob([JSON.stringify(f.data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=f.filename;a.click();
+  URL.revokeObjectURL(a.href);setTimeout(()=>dlSeq(files,i+1),400);
+}
+</script>
+</body>
+</html>
