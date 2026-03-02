@@ -31,13 +31,18 @@
   --topbar-h: 48px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{
+html{
+  height:100%;height:100dvh;
+  overflow:hidden;width:100%;
+}
+body{
   font-family:'Inter',system-ui,sans-serif;
   background:var(--bg);color:var(--text-primary);
-  overflow:hidden;height:100%;width:100%;
+  overflow:hidden;
+  height:100%;width:100%;
+  margin:0;padding:0;
   touch-action:manipulation;-webkit-touch-callout:none;
   -webkit-user-select:none;user-select:none;
-  position:fixed;inset:0;
 }
 .canvas-wrap, .canvas-wrap canvas{touch-action:none}
 input, textarea, .search-input, .sheet-body, .outline-wrap, .search-results{
@@ -634,8 +639,7 @@ textarea.field-input{resize:none;min-height:56px;line-height:1.6}
 /* ═══ DESKTOP ADAPTIVE LAYOUT ═══ */
 @media (min-width: 1024px) {
   html, body {
-    position: relative;
-    inset: auto;
+    height: 100%;
   }
   .topbar {
     padding: 8px 16px;
@@ -1100,10 +1104,17 @@ document.addEventListener('DOMContentLoaded', () => {
   updateActionState();
   setupUXTip();
   syncDepthUI();
-  setTimeout(() => {
+  // Initial fit: try quickly, then re-fit after layout stabilizes
+  const doInitialFit = () => {
+    resizeCanvas();
     zoomFit();
     document.getElementById('loading').classList.add('hidden');
-  }, 120);
+  };
+  setTimeout(doInitialFit, 150);
+  // Also re-fit when the page fully loads (images, fonts, etc.)
+  window.addEventListener('load', () => {
+    setTimeout(() => { resizeCanvas(); zoomFit(); }, 50);
+  }, {once:true});
 
   canvas.addEventListener('touchstart', onTouchStart, {passive:false});
   canvas.addEventListener('touchmove', onTouchMove, {passive:false});
@@ -1147,7 +1158,14 @@ function countAllNodes(d) { let c = 1; if (d.children) for (const ch of d.childr
 
 function resizeCanvas() {
   const wrap = document.getElementById('canvasWrap');
-  const w = wrap.clientWidth, h = wrap.clientHeight;
+  let w = wrap.clientWidth, h = wrap.clientHeight;
+  // Fallback: if canvasWrap has no dimensions yet, use viewport size minus UI chrome
+  if (h <= 0 || w <= 0) {
+    const safeTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-top')) || 0;
+    w = w || window.innerWidth;
+    h = h || (window.innerHeight - safeTop - 48 - 33 - 60);
+    if (h <= 0) h = window.innerHeight * 0.6;
+  }
   canvas.width = w * dpr;
   canvas.height = h * dpr;
   canvas.style.width = w + 'px';
@@ -1739,9 +1757,12 @@ function zoomBy(f){
 function zoomFit(){
   if(!nodes.length)return;
   const W=canvas.width/dpr,H=canvas.height/dpr;
+  if(W<=0||H<=0)return; // canvas not ready yet
   const tw=_bbox.xMax-_bbox.xMin, th=_bbox.yMax-_bbox.yMin;
+  if(tw<=0||th<=0)return;
   const pad=30;
   cam.scale=Math.min((W-pad*2)/tw,(H-pad*2)/th,2);
+  if(cam.scale<=0)cam.scale=0.1; // safety clamp
   cam.x=W/2-(_bbox.xMin+tw/2)*cam.scale;
   cam.y=pad-_bbox.yMin*cam.scale+15;
   draw();
