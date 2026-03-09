@@ -1116,7 +1116,7 @@ let highlightPath = null;  // Set of data nodes on path to root for highlighting
 
 // Layout constants
 const _isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-const NW = _isMobile ? 130 : 110, NH = _isMobile ? 56 : 48, GAP_X = _isMobile ? 16 : 14, ROW_H = _isMobile ? 94 : 82;
+const NW = _isMobile ? 46 : 38, NH = _isMobile ? 130 : 110, GAP_X = _isMobile ? 10 : 8, ROW_H = _isMobile ? 170 : 150;
 const TOGGLE_R = _isMobile ? 17 : 13;
 
 // Branch colors
@@ -1505,44 +1505,55 @@ function drawNodes() {
 
     // Top accent strip
     ctx.save();
-    ctx.beginPath(); ctx.moveTo(x+6,y); ctx.lineTo(x+w-6,y);
-    ctx.quadraticCurveTo(x+w,y,x+w,y+2.5); ctx.lineTo(x,y+2.5);
-    ctx.quadraticCurveTo(x,y,x+6,y); ctx.closePath(); ctx.clip();
+    ctx.beginPath(); ctx.moveTo(x+4,y); ctx.lineTo(x+w-4,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+2); ctx.lineTo(x,y+2);
+    ctx.quadraticCurveTo(x,y,x+4,y); ctx.closePath(); ctx.clip();
     ctx.fillStyle = isRoot ? '#d97706' : br.accent;
     ctx.globalAlpha = (onPath || isSel) ? 0.9 : 0.4;
-    ctx.fillRect(x,y,w,2.5);
+    ctx.fillRect(x,y,w,2);
     ctx.restore();
 
-    // Left bar
+    // Left bar (thinner for narrow nodes)
     ctx.globalAlpha = hasPath ? (onPath ? 1 : 0.12) : 1;
-    roundRect(ctx, x, y+4, 3, h-8, 1.5);
+    roundRect(ctx, x, y+3, 2, h-6, 1);
     ctx.fillStyle = isRoot ? '#d97706' : br.accent; ctx.fill();
 
-    // Name
+    // Name (vertical)
     ctx.fillStyle = isSel ? '#451a03' : (onPath ? br.accent : br.text);
-    ctx.font = `700 ${detail>=2?(_isMobile?13:11):(_isMobile?12:10)}px "Noto Serif SC",serif`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    const nameY = (n.data.spouse && detail>=2) ? n.y-4 : n.y+1;
-    ctx.fillText(truncate(n.data.name, 5), n.x, nameY);
+    const nameFontSize = detail>=2 ? (_isMobile?13:11) : (_isMobile?12:10);
+    ctx.font = `700 ${nameFontSize}px "Noto Serif SC",serif`;
+    const nameStr = truncate(n.data.name, 5);
+    const nameCharGap = 1;
+    const nameBlockH = nameStr.length * (nameFontSize + nameCharGap) - nameCharGap;
+    let nameTopY;
+    if (n.data.spouse && detail>=2) {
+      nameTopY = n.y - nameBlockH/2 - 4;
+    } else {
+      nameTopY = n.y - nameBlockH/2;
+    }
+    drawVerticalText(ctx, nameStr, n.x, nameTopY, nameFontSize, nameCharGap);
 
     if (detail >= 2) {
-      // Spouse
+      // Spouse (vertical, smaller, to the right or below)
       if (n.data.spouse) {
-        ctx.fillStyle='#78716c'; ctx.font=`400 ${_isMobile?9:7}px "Noto Serif SC",serif`;
-        ctx.fillText('配 '+truncate(n.data.spouse,5), n.x, nameY+14);
+        const spFontSize = _isMobile ? 9 : 7;
+        ctx.fillStyle='#78716c'; ctx.font=`400 ${spFontSize}px "Noto Serif SC",serif`;
+        const spText = '配'+truncate(n.data.spouse,3);
+        const spTopY = nameTopY + nameBlockH + 4;
+        drawVerticalText(ctx, spText, n.x, spTopY, spFontSize, 0);
       }
       // Gen badge
-      const bt = `${n.data.generation}代`;
-      ctx.font=`600 ${_isMobile?8:6}px "Inter",sans-serif`;
-      const btw = ctx.measureText(bt).width+6;
-      const bx=x+w-btw-3, by=y+3;
-      ctx.fillStyle=`${br.accent}18`; roundRect(ctx,bx,by,btw,11,3); ctx.fill();
+      const bt = `${n.data.generation}`;
+      ctx.font=`600 ${_isMobile?7:6}px "Inter",sans-serif`;
+      const btw = ctx.measureText(bt).width+4;
+      const bx=x+w/2-btw/2, by=y+2;
+      ctx.fillStyle=`${br.accent}18`; roundRect(ctx,bx,by,btw,10,3); ctx.fill();
       ctx.fillStyle=br.accent; ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(bt, bx+btw/2, by+5.5);
+      ctx.fillText(bt, bx+btw/2, by+5);
       // Branch label
       if (n.data.branch && n.data.generation<=2) {
         ctx.fillStyle=br.accent; ctx.font='600 7px "Noto Serif SC",serif';
-        ctx.textAlign='left'; ctx.fillText(n.data.branch, x+7, y+h-6);
+        ctx.textAlign='center'; ctx.fillText(n.data.branch[0]||'', n.x, y+h-6);
       }
     }
 
@@ -1581,6 +1592,13 @@ function roundRect(ctx,x,y,w,h,r){
   ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
 }
 function truncate(s,m){return s&&s.length>m?s.slice(0,m)+'…':(s||'')}
+function drawVerticalText(ctx, text, cx, topY, charSize, gap) {
+  if (!text) return;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  for (let i=0; i<text.length; i++) {
+    ctx.fillText(text[i], cx, topY + i*(charSize+gap) + charSize/2);
+  }
+}
 
 // ═══════════════════════════════════════
 // MINIMAP
